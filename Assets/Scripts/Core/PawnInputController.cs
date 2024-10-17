@@ -6,10 +6,13 @@ public class PawnInputController : MonoBehaviour, IClickable, IPawn
     [Inject] private ICoreController m_core;
     [SerializeField] private Turn m_item;
     [SerializeField] private GameObject m_background;
+    [SerializeField] private PawnType m_pawnType;
+
     private static PawnInputController m_selected;
     private Turn m_current;
     public ITile CurrentTile { get; private set; }
     public bool HasMovedToDeck {  get; private set; }
+    public PawnType PawnType => m_pawnType;
 
     public Turn PawnTurn => m_item;
 
@@ -55,11 +58,15 @@ public class PawnInputController : MonoBehaviour, IClickable, IPawn
         SetBackground(false);
     }
 }
-
+public enum PawnType 
+{
+    Horse, Tower, Bishop
+}
 public interface IPawn
 {
     void MoveToPosition(ITile tile);
     ITile CurrentTile { get; }
     bool HasMovedToDeck { get; }
     Turn PawnTurn {  get; }
+    PawnType PawnType { get; }
 }
