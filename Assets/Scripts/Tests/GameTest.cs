@@ -11,9 +11,8 @@ public class GameTest
     [OneTimeSetUp]
     public void OneTimeSetUp() 
     {
-        m_grid = new GridController();
         m_coreController = Substitute.For<ICoreController>();
-        m_grid.Init(m_coreController);
+        m_grid = new GridController(m_coreController);
     }
 
     [SetUp]

@@ -1,9 +1,11 @@
-public class GridController 
+public class GridController : IGrid
 {
     private IPawn[,] m_grid = new IPawn[3, 3];
     private ICoreController m_core;
 
-    public void Init(ICoreController core) 
+    public IPawn[,] Grid => m_grid;
+
+    public GridController(ICoreController core) 
     {
         m_core = core;
         m_core.LastMovement.Subscribe(OnPawnMovement);
@@ -69,5 +71,10 @@ public class GridController
             }
         }
     }
+}
+
+public interface IGrid 
+{
+    IPawn[,] Grid {  get; }
 }
 

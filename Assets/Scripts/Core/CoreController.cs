@@ -16,13 +16,14 @@ public class CoreController : MonoBehaviour, ICoreController
     private List<IPawn> m_pawns = new List<IPawn>();
 
     public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
-    private GridController m_game;
 
+    private GridController m_grid;
+    private MovementController m_movement;
     void Start() 
     {
         m_pawns = m_pawnContainer.GetComponentsInChildren<IPawn>(true).ToList();
-        m_game = new GridController();
-        m_game.Init(this);
+        m_grid = new GridController(this);
+        m_movement = new MovementController(m_grid);    
     }
 
     void OnDestroy() 
@@ -33,6 +34,7 @@ public class CoreController : MonoBehaviour, ICoreController
     public void SetSelectedPawn(IPawn pawn) 
     {
         SelectedPawn = pawn;
+        m_movement.CheckForMovement(pawn);
     }
 
     public void MoveSelectedToPosition(ITile tile) 
