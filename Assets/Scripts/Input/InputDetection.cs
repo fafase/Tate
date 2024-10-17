@@ -12,8 +12,7 @@ public class InputDetection : MonoBehaviour
 
     void Update()
     {
-        // Detect if the user has clicked or tapped
-        if (Input.GetMouseButtonDown(0)) // 0 = Left Mouse Button
+        if (Input.GetMouseButtonDown(0))
         {
             DetectClick();
         }

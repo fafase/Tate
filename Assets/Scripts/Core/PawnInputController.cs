@@ -1,4 +1,3 @@
-using NSubstitute.Routing.Handlers;
 using UnityEngine;
 using Zenject;
 
@@ -10,8 +9,9 @@ public class PawnInputController : MonoBehaviour, IClickable, IPawn
     private static PawnInputController m_selected;
     private Turn m_current;
     public ITile CurrentTile { get; private set; }
+    public bool HasMovedToDeck {  get; private set; }
 
-    public bool HasMovedToDeck {  get; private set; }  
+    public Turn PawnTurn => m_item;
 
     void Start() 
     {
@@ -61,4 +61,5 @@ public interface IPawn
     void MoveToPosition(ITile tile);
     ITile CurrentTile { get; }
     bool HasMovedToDeck { get; }
+    Turn PawnTurn {  get; }
 }
