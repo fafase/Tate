@@ -1,11 +1,14 @@
 using UnityEngine;
 using Zenject;
 
-public class ZenjectCoreContext : MonoInstaller
+namespace Tatedrez.Core 
 {
-    [SerializeField] private CoreController m_coreController; 
-    public override void InstallBindings()
+    public class ZenjectCoreContext : MonoInstaller
     {
-        Container.BindInterfacesAndSelfTo<ICoreController>().FromInstance(m_coreController);
+        [SerializeField] private CoreController m_coreController;
+        public override void InstallBindings()
+        {
+            Container.BindInterfacesAndSelfTo<ICoreController>().FromInstance(m_coreController);
+        }
     }
 }

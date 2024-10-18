@@ -3,25 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovementController 
+namespace Tatedrez.Core
 {
-    private IGrid m_grid;
-    public MovementController(IGrid grid)
+    public class MovementController
     {
-        m_grid = grid;
-    }
+        private IGrid m_grid;
+        private PawnMovement m_pawnMovement;
+        public MovementController(IGrid grid)
+        {
+            m_grid = grid;
+            m_pawnMovement = new PawnMovement(m_grid);
+        }
 
-    public void CheckForMovement(IPawn pawn)
-    {
-        for (int i = 0; i < 3; i++)
-        { 
-            for (int j = 0; j < 3; j++) 
-            {
-                if (m_grid.Grid[i, j] == null) 
-                {
-                    Debug.Log($"Available at {i}{j}");
-                }
-            }
+        public void CheckForMovement(IPawn pawn)
+        {
+            List<(int row, int col)> result = m_pawnMovement.CheckForAllowedMoves(pawn);
+
         }
     }
 }

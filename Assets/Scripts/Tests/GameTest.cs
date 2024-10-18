@@ -1,5 +1,6 @@
 using NSubstitute;
 using NUnit.Framework;
+using Tatedrez.Core;
 
 public class GameTest
 {

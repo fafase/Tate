@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Tatedrez.Core;
 
 public class BishopMovementTest : PawnMovementTest
 {
