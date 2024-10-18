@@ -68,5 +68,5 @@ public interface IPawn
     ITile CurrentTile { get; }
     bool HasMovedToDeck { get; }
     Turn PawnTurn {  get; }
-    PawnType PawnType { get; }
+    PawnType PawnType { get;}
 }
