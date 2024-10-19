@@ -7,13 +7,19 @@ namespace Tatedrez.Core
     public class PawnMovement
     {
         private IGrid m_grid;
-        public PawnMovement(IGrid grid)
+        private ICoreController m_core;
+        public PawnMovement(ICoreController core, IGrid grid)
         {
+            m_core = core;
             m_grid = grid;
         }
 
         public List<(int row, int col)> CheckForAllowedMoves(IPawn pawn)
         {
+            if (!m_core.AllPawnsOnDeck)
+            {
+                return new List<(int row, int col)>();
+            }
             switch (pawn.PawnType)
             {
                 case PawnType.Tower:

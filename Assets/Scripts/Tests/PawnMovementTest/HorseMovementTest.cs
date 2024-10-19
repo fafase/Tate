@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using NSubstitute;
 using NUnit.Framework;
 using Tatedrez.Core;
 
@@ -27,5 +28,11 @@ public class HorseMovementTest : PawnMovementTest
 
         List<(int row, int col)> result = m_move.CheckForAllowedMoves(m_pawn);
         CollectionAssert.AreEquivalent(expected, result);
+    }
+
+    [Test]
+    public void Horse_StartPosition_Test()
+    {
+       
     }
 }

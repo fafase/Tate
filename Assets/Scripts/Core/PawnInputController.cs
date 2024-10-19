@@ -39,7 +39,6 @@ namespace Tatedrez.Core
             {
                 m_selected.SetBackground(false);
             }
-            HasMovedToDeck = true;
             m_selected = this;
             m_core.SetSelectedPawn(this);
             SetBackground(!m_background.activeSelf);
@@ -52,6 +51,7 @@ namespace Tatedrez.Core
         }
         public void MoveToPosition(ITile tile)
         {
+            HasMovedToDeck = true;
             CurrentTile?.FreeTile();
             CurrentTile = tile;
             Vector3 position = CurrentTile.Position;

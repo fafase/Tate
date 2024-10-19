@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.ShaderData;
 
 namespace Tatedrez.Core
 {
@@ -20,12 +21,13 @@ namespace Tatedrez.Core
         public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
 
         private GridController m_grid;
-        private MovementController m_movement;
+        private PawnMovement m_movement;
+
         void Start()
         {
             m_pawns = m_pawnContainer.GetComponentsInChildren<IPawn>(true).ToList();
             m_grid = new GridController(this);
-            m_movement = new MovementController(m_grid);
+            m_movement = new PawnMovement(this, m_grid);
         }
 
         void OnDestroy()
@@ -36,15 +38,20 @@ namespace Tatedrez.Core
         public void SetSelectedPawn(IPawn pawn)
         {
             SelectedPawn = pawn;
-            m_movement.CheckForMovement(pawn);
+            m_movement.CheckForAllowedMoves(pawn);
         }
 
         public void MoveSelectedToPosition(ITile tile)
         {
             if (SelectedPawn == null) { return; }
             SelectedPawn.MoveToPosition(tile);
-            CurrentTurn.Value = CurrentTurn.Value == Turn.Player1 ? Turn.Player2 : Turn.Player1;
             LastMovement.Value = new Movement(SelectedPawn, tile);
+            var nextTurn = CurrentTurn.Value == Turn.Player1 ? Turn.Player2 : Turn.Player1;
+            if (!AllPawnsOnDeck || m_movement.HasPotentialMove(m_pawns, nextTurn)) 
+            {
+                CurrentTurn.Value = nextTurn;
+            }
+
             SelectedPawn = null;
         }
 

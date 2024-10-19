@@ -6,14 +6,16 @@ using Tatedrez.Core;
 public class PawnMovementTest
 {
     protected PawnMovement m_move;
+    protected ICoreController m_core;
     protected IGrid m_grid;
     protected IPawn m_pawn;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
+        m_core = Substitute.For<ICoreController>();
         m_grid = Substitute.For<IGrid>();
-        m_move = new PawnMovement(m_grid);
+        m_move = new PawnMovement(m_core, m_grid);
         m_pawn = Substitute.For<IPawn>();
     }
 
@@ -35,6 +37,7 @@ public class PawnMovementTest
 
     protected void SetupWithTestCases(PawnType type, int x, int y, List<(int row, int col)> pawns) 
     {
+        m_core.AllPawnsOnDeck.Returns(true);
         SetPawn(type, x, y);
         var grid = CreateGrid(3, x, y);
         pawns.ForEach(p => grid[p.row, p.col] = Substitute.For<IPawn>());

@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
-using Tatedrez.Core;
 using NSubstitute;
-using System.Drawing;
+using NUnit.Framework;
+using System.Collections.Generic;
+using Tatedrez.Core;
 
 public class PotentialMoveTest : PawnMovementTest
 {
@@ -31,6 +27,7 @@ public class PotentialMoveTest : PawnMovementTest
 
     private void TestSetup(int y) 
     {
+        m_core.AllPawnsOnDeck.Returns(true);
         var grid = new IPawn[3, 3];
         m_grid.Grid.Returns(grid);
 
