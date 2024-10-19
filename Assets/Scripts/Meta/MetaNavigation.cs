@@ -1,7 +1,10 @@
 using Tools;
+using Tatedrez.UI;
 
-public class MetaNavigation : Navigation
+namespace Tatedrez.Meta
 {
-    protected override IPopup OpenPopup() => m_popupManager.Show<PlayLevelPopup>();
+    public class MetaNavigation : Navigation
+    {
+        protected override IPopup OpenPopup() => m_popupManager.Show<PlayLevelPopup>();
+    }
 }
-
