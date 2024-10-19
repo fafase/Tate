@@ -4,13 +4,16 @@ using System.Linq;
 using Tools;
 using UnityEngine;
 using Zenject;
-using static UnityEditor.ShaderData;
+using Tatedrez.UI;
+using Rx;
 
 namespace Tatedrez.Core
 {
     public class CoreController : MonoBehaviour, ICoreController
     {
         [Inject] private IMovementService m_movementService;
+        [Inject] private IPopupManager m_popupManager;
+
         [SerializeField] private GameObject m_pawnContainer;
         [SerializeField] private GameObject m_tileContainer;
 
@@ -59,7 +62,8 @@ namespace Tatedrez.Core
 
         public void SetWin(Turn pawnTurn)
         {
-            Debug.LogWarning($"{pawnTurn} won");
+            EndLevelPopup popup = (EndLevelPopup)m_popupManager.Show<EndLevelPopup>();
+            popup.InitWithWinner(pawnTurn);
         }
     }
     public struct Movement
