@@ -1981,8 +1981,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2124317134}
-  - component: {fileID: 2124317133}
   - component: {fileID: 2124317135}
+  - component: {fileID: 2124317133}
+  - component: {fileID: 2124317136}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -2002,6 +2003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2236adf46962ba344a6c7d4761e2e75b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_turn: 0
 --- !u!4 &2124317134
 Transform:
   m_ObjectHideFlags: 0
@@ -2031,6 +2033,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_pawnContainer: {fileID: 215378430}
   m_tileContainer: {fileID: 543562589}
+--- !u!114 &2124317136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124317132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2236adf46962ba344a6c7d4761e2e75b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_turn: 1
 --- !u!1001 &4366001175128657791
 PrefabInstance:
   m_ObjectHideFlags: 0
