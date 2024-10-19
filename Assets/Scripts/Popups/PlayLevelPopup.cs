@@ -1,5 +1,8 @@
 
-public class PlayLevelPopup : LoadNextScenePopup
+namespace Tatedrez.UI
 {
+    public class PlayLevelPopup : LoadNextScenePopup
+    {
 
+    }
 }

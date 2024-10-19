@@ -1,5 +1,8 @@
 
-public class QuitLevelPopup : LoadNextScenePopup
+namespace Tatedrez.UI
 {
+    public class QuitLevelPopup : LoadNextScenePopup
+    {
 
+    }
 }
