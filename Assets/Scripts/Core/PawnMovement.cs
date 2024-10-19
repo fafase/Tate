@@ -101,5 +101,12 @@ namespace Tatedrez.Core
             }
             return tiles.ToList();
         }
+
+        public bool HasPotentialMove(List<IPawn> pawns, Turn turn)
+        {
+            return pawns
+                    .Where(p => p.PawnTurn.Equals(turn))
+                    .Any(pawn => CheckForAllowedMoves(pawn).Count > 0);
+        }
     }
 }
