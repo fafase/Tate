@@ -8,7 +8,7 @@ namespace Tatedrez.Core
     public class TileInputController : MonoBehaviour, IClickable, ITile
     {
         [Inject] private ICoreController m_core;
-        private SpriteRenderer m_spriteRenderer;
+        private SpriteRenderer m_availableTile;
         public bool IsAvailable { get; private set; } = true;
         public Vector3 Position => transform.position;
         public string Name => gameObject.name;
@@ -17,18 +17,29 @@ namespace Tatedrez.Core
         public int GridX { get; private set; }
         public int GridY { get; private set; }
 
+
         void Start()
         {
             GenerateGridPosition();
-            m_spriteRenderer = GetComponent<SpriteRenderer>();
-            m_spriteRenderer.enabled = false;
+            m_availableTile = GetComponent<SpriteRenderer>();
+            m_availableTile.enabled = false;
         }
         public void OnPress()
         {
-            if (m_core.SelectedPawn != null && IsAvailable)
+            if (!m_core.AllPawnsOnDeck) 
+            {
+                if (m_core.SelectedPawn != null && IsAvailable)
+                {
+                    IsAvailable = false;
+                    m_core.MoveSelectedToPosition(this);
+                }
+                return;
+            }
+            if (m_availableTile.enabled) 
             {
                 IsAvailable = false;
                 m_core.MoveSelectedToPosition(this);
+                m_availableTile.enabled = false;
             }
         }
 
@@ -52,6 +63,11 @@ namespace Tatedrez.Core
             GridX = x;
             GridY = y;
         }
+
+        public void SetTileBackground() 
+        {
+            m_availableTile.enabled = true;
+        }
     }
 
     public interface ITile
@@ -63,5 +79,6 @@ namespace Tatedrez.Core
         int GridY { get; }
         void FreeTile();
         IPawn CurrentPawn { get; }
+        void SetTileBackground();
     }
 }

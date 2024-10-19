@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tools;
 using UnityEngine;
+using Zenject;
 using static UnityEditor.ShaderData;
 
 namespace Tatedrez.Core
 {
     public class CoreController : MonoBehaviour, ICoreController
     {
+        [Inject] private IMovementService m_movementService;
         [SerializeField] private GameObject m_pawnContainer;
         [SerializeField] private GameObject m_tileContainer;
 
@@ -17,17 +20,13 @@ namespace Tatedrez.Core
         public IReactiveProperty<Movement> LastMovement { get; private set; } = new ReactiveProperty<Movement>();
 
         private List<IPawn> m_pawns = new List<IPawn>();
-
+        
         public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
 
-        private GridController m_grid;
-        private PawnMovement m_movement;
 
         void Start()
         {
             m_pawns = m_pawnContainer.GetComponentsInChildren<IPawn>(true).ToList();
-            m_grid = new GridController(this);
-            m_movement = new PawnMovement(this, m_grid);
         }
 
         void OnDestroy()
@@ -38,7 +37,10 @@ namespace Tatedrez.Core
         public void SetSelectedPawn(IPawn pawn)
         {
             SelectedPawn = pawn;
-            m_movement.CheckForAllowedMoves(pawn);
+            if (AllPawnsOnDeck)
+            {
+                m_movementService.SetPotentialTiles(pawn);
+            }
         }
 
         public void MoveSelectedToPosition(ITile tile)
@@ -47,7 +49,7 @@ namespace Tatedrez.Core
             SelectedPawn.MoveToPosition(tile);
             LastMovement.Value = new Movement(SelectedPawn, tile);
             var nextTurn = CurrentTurn.Value == Turn.Player1 ? Turn.Player2 : Turn.Player1;
-            if (!AllPawnsOnDeck || m_movement.HasPotentialMove(m_pawns, nextTurn)) 
+            if (!AllPawnsOnDeck || m_movementService.HasPotentialMove(m_pawns, nextTurn)) 
             {
                 CurrentTurn.Value = nextTurn;
             }
