@@ -16,15 +16,18 @@ namespace Tatedrez.UI
 
         private void Start()
         {
-            m_playButton.onClick.AddListener(() => Load());
+            m_playButton
+                .OnClickAsObservable()
+                .Subscribe(_ => Load())
+                .AddTo(m_compositeDisposable);
         }
 
         private void Load()
         {
             OnClose
                 .Subscribe(_ => 
-                    m_sceneLoading.LoadScene(m_scene.ToString())
-                ).AddTo(m_compositeDisposable);
+                    m_sceneLoading.LoadScene(m_scene.ToString()))
+                .AddTo(m_compositeDisposable);
             Close();
         }
 
