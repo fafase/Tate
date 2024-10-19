@@ -2,6 +2,7 @@ using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using Rx;
 
 namespace Tatedrez.UI
 {
@@ -12,6 +13,7 @@ namespace Tatedrez.UI
 
         [Inject] private ISceneLoading m_sceneLoading;
 
+
         private void Start()
         {
             m_playButton.onClick.AddListener(() => Load());
@@ -19,7 +21,10 @@ namespace Tatedrez.UI
 
         private void Load()
         {
-            OnClose += () => m_sceneLoading.LoadScene(m_scene.ToString());
+            OnClose
+                .Subscribe(_ => 
+                    m_sceneLoading.LoadScene(m_scene.ToString())
+                ).AddTo(m_compositeDisposable);
             Close();
         }
 

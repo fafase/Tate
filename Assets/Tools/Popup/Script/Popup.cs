@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using State = Tools.IPopup.State;
+using Rx;
 
 namespace Tools
 {
@@ -19,9 +20,10 @@ namespace Tools
         private State m_state = State.Idle;
         public State PopupState => m_state;
 
-        public event Action OnClose;
-        public event Action OnOpen;
+        public ISubject<Unit> OnClose { get; private set; } =  new Subject<Unit>();
+        public ISubject<Unit> OnOpen { get; private set; } = new Subject<Unit>();
         public bool IsOpen => m_state == State.Opening || m_state == State.Idle;
+        protected CompositeDisposable m_compositeDisposable = new CompositeDisposable();
 
         public virtual void Init(IPopupManager popupManager)
         {
@@ -40,6 +42,11 @@ namespace Tools
             StartCoroutine(OpenSequence());
         }
 
+        protected virtual void OnDestroy() 
+        {
+            m_compositeDisposable?.Dispose();
+        }
+
         private void AddAnimation(AnimationClip clip) 
         {
             if(clip != null) 
@@ -52,13 +59,13 @@ namespace Tools
         {
             yield return StartCoroutine(AnimationSequence(State.Opening));
             SetButtons(true);
-            OnOpen?.Invoke();
+            OnOpen.OnNext(Unit.Default);
         }
 
         private IEnumerator CloseSequence() 
         {
             yield return StartCoroutine(AnimationSequence(State.Closing));
-            OnClose?.Invoke();
+            OnClose.OnNext(Unit.Default);
             Destroy(gameObject);
         }
 
@@ -88,9 +95,6 @@ namespace Tools
             StartCoroutine(CloseSequence());
         }
 
-        public void AddToClose(Action action) => OnClose += action;
-        public void RemoveToClose(Action action) => OnClose -= action;
-
         private void SetButtons(bool value) => Array.ForEach(GetComponentsInChildren<Button>(), (btn => btn.enabled = value));
 
         public class Factory : PlaceholderFactory<Popup, Popup> { }
@@ -100,8 +104,9 @@ namespace Tools
     {
         void Close(bool closeImmediate = false);
         void Init(IPopupManager popupManager);
-        void AddToClose(Action action);
-        void RemoveToClose(Action action);
+        ISubject<Unit> OnOpen { get; }
+        ISubject<Unit> OnClose { get; }
+
         State PopupState { get; }
         bool IsOpen { get; }
         public enum State
