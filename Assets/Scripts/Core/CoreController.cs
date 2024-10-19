@@ -6,6 +6,7 @@ using UnityEngine;
 using Zenject;
 using Tatedrez.UI;
 using Rx;
+using UnityEditor.PackageManager;
 
 namespace Tatedrez.Core
 {
@@ -16,7 +17,7 @@ namespace Tatedrez.Core
 
         [SerializeField] private GameObject m_pawnContainer;
         [SerializeField] private GameObject m_tileContainer;
-
+        private CompositeDisposable m_compositeDisposable = new CompositeDisposable();
         public IPawn SelectedPawn { get; private set; }
 
         public IReactiveProperty<Turn> CurrentTurn { get; private set; } = new ReactiveProperty<Turn>(Turn.Player1);
@@ -35,6 +36,7 @@ namespace Tatedrez.Core
         void OnDestroy()
         {
             (CurrentTurn as IDisposable)?.Dispose();
+            m_compositeDisposable?.Dispose();
         }
 
         public void SetSelectedPawn(IPawn pawn)
@@ -49,15 +51,24 @@ namespace Tatedrez.Core
         public void MoveSelectedToPosition(ITile tile)
         {
             if (SelectedPawn == null) { return; }
-            SelectedPawn.MoveToPosition(tile);
-            LastMovement.Value = new Movement(SelectedPawn, tile);
-            var nextTurn = CurrentTurn.Value == Turn.Player1 ? Turn.Player2 : Turn.Player1;
-            if (!AllPawnsOnDeck || m_movementService.HasPotentialMove(m_pawns, nextTurn)) 
-            {
-                CurrentTurn.Value = nextTurn;
-            }
 
-            SelectedPawn = null;
+            SelectedPawn
+                .MoveToPosition(tile)
+                .Subscribe(new Observer<Unit>(onNext: _ => { },
+                onCompleted: () =>
+                {
+                    LastMovement.Value = new Movement(SelectedPawn, tile);
+                    var nextTurn = CurrentTurn.Value == Turn.Player1 ? Turn.Player2 : Turn.Player1;
+                    if (!AllPawnsOnDeck || m_movementService.HasPotentialMove(m_pawns, nextTurn))
+                    {
+                        CurrentTurn.Value = nextTurn;
+                    }
+
+                    SelectedPawn = null;
+                }))
+                .AddTo(m_compositeDisposable);
+
+
         }
 
         public void SetWin(Turn pawnTurn)

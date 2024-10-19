@@ -1,4 +1,8 @@
+using Rx;
+using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Zenject;
 
 namespace Tatedrez.Core
@@ -9,6 +13,10 @@ namespace Tatedrez.Core
         [SerializeField] private Turn m_item;
         [SerializeField] private GameObject m_background;
         [SerializeField] private PawnType m_pawnType;
+
+        [Header("Animation values")]
+        [SerializeField] private float m_period = 0.5f;
+        [SerializeField] private float m_maxScale = 1.5f;
 
         private static PawnInputController m_selected;
         private Turn m_current;
@@ -49,24 +57,51 @@ namespace Tatedrez.Core
         {
             m_background.SetActive(value);
         }
-        public void MoveToPosition(ITile tile)
+
+        public IObservable<Unit> MoveToPosition(ITile tile)
         {
+            var observable = new Observable<Unit>();
             HasMovedToDeck = true;
             CurrentTile?.FreeTile();
             CurrentTile = tile;
             Vector3 position = CurrentTile.Position;
             position.z = -1f;
-            transform.position = position;
+            StartCoroutine(LerpSequence(observable, position, 0.25f));
+
             SetBackground(false);
+            return observable;
         }
+
+        private IEnumerator LerpSequence(Observable<Unit> observable, Vector3 target, float period)
+        {
+            float ratio = 0f;
+
+            Vector3 start = transform.position;
+            Vector3 scale = transform.localScale;
+            Vector3 maxScale = scale * m_maxScale;
+            while (ratio < 1f)
+            {
+                ratio += Time.deltaTime / m_period;
+                transform.position = Vector3.Lerp(start, target, ratio);
+
+                float scaleRatio = Mathf.Sin(ratio * Mathf.PI); 
+                transform.localScale = Vector3.Lerp(scale, maxScale, scaleRatio);
+
+                observable.Notify(Unit.Default);
+                yield return null;
+            }
+            transform.position = target;
+            observable.Complete();
+        } 
     }
+
     public enum PawnType
     {
         Horse, Tower, Bishop
     }
     public interface IPawn
     {
-        void MoveToPosition(ITile tile);
+        IObservable<Unit> MoveToPosition(ITile tile);
         ITile CurrentTile { get; }
         bool HasMovedToDeck { get; }
         Turn PawnTurn { get; }
