@@ -6,7 +6,7 @@ namespace Rx
     {
         private T value;
 
-        public event Action<T> ValueChanged;
+        public event Action<T> OnValueChanged;
 
         public T Value
         {
@@ -16,7 +16,7 @@ namespace Rx
                 if (!Equals(this.value, value))
                 {
                     this.value = value;
-                    ValueChanged?.Invoke(this.value);
+                    OnValueChanged?.Invoke(this.value);
                 }
             }
         }
@@ -28,13 +28,14 @@ namespace Rx
 
         public IDisposable Subscribe(Action<T> listener)
         {
-            ValueChanged += listener;
-            return new Unsubscriber(() => ValueChanged -= listener);
+            OnValueChanged += listener;
+            return new Unsubscriber(() => OnValueChanged -= listener);
         }
+
 
         public void Dispose()
         {
-            ValueChanged = null;
+            OnValueChanged = null;
         }
 
         private class Unsubscriber : IDisposable

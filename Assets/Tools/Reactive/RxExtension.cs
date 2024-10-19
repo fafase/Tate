@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Rx 
@@ -15,6 +14,11 @@ namespace Rx
                 subject.OnCompleted();
             };
             return subject;
+        }
+
+        public static IObservable<T> Where<T>(this IReactiveProperty<T> reactiveProperty, Func<T, bool> predicate)
+        {
+            return new Observable<T>(reactiveProperty, predicate);
         }
     }
 }
