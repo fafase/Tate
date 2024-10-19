@@ -1,31 +1,55 @@
 using System;
+using System.Collections.Generic;
 namespace Rx 
 {
     public class Observable<T> : IObservable<T>
     {
-        private readonly IReactiveProperty<T> m_reactiveProperty;
-        private readonly Func<T, bool> m_predicate;
-
-        public Observable(IReactiveProperty<T> reactiveProperty, Func<T, bool> predicate)
-        {
-            m_reactiveProperty = reactiveProperty;
-            m_predicate = predicate;
-        }
+        private readonly List<IObserver<T>> observers = new List<IObserver<T>>();
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            if (m_predicate(m_reactiveProperty.Value))
+            if (!observers.Contains(observer))
             {
-                observer.OnNext(m_reactiveProperty.Value);
+                observers.Add(observer);
+            }
+            return new Unsubscriber(observers, observer);
+        }
+
+        public void Notify(T value)
+        {
+            foreach (var observer in observers)
+            {
+                observer.OnNext(value);
+            }
+        }
+
+        public void Complete()
+        {
+            foreach (var observer in observers)
+            {
+                observer.OnCompleted();
+            }
+            observers.Clear(); 
+        }
+
+        private class Unsubscriber : IDisposable
+        {
+            private readonly List<IObserver<T>> _observers;
+            private readonly IObserver<T> _observer;
+
+            public Unsubscriber(List<IObserver<T>> observers, IObserver<T> observer)
+            {
+                _observers = observers;
+                _observer = observer;
             }
 
-            return m_reactiveProperty.Subscribe(value =>
+            public void Dispose()
             {
-                if (m_predicate(value))
+                if (_observer != null && _observers.Contains(_observer))
                 {
-                    observer.OnNext(value);
+                    _observers.Remove(_observer);
                 }
-            });
+            }
         }
     }
 }

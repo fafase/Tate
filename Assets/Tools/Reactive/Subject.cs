@@ -22,7 +22,7 @@ namespace Rx
 
         public IDisposable Subscribe(Action<T> onNext, Action<Exception> onError = null, Action onCompleted = null)
         {
-            var observer = new ActionObserver<T>(onNext, onError, onCompleted);
+            var observer = new Observer<T>(onNext, onError, onCompleted);
             return Subscribe(observer);
         }
 
@@ -84,13 +84,13 @@ namespace Rx
         }
     }
 
-    public class ActionObserver<T> : IObserver<T>
+    public class Observer<T> : IObserver<T>
     {
         private readonly Action<T> m_onNext;
         private readonly Action<Exception> m_onError;
         private readonly Action m_onCompleted;
 
-        public ActionObserver(Action<T> onNext, Action<Exception> onError = null, Action onCompleted = null)
+        public Observer(Action<T> onNext, Action<Exception> onError = null, Action onCompleted = null)
         {
             m_onNext = onNext;
             m_onError = onError;
