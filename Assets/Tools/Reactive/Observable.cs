@@ -17,7 +17,13 @@ namespace Rx
             }
             public IDisposable Subscribe(IObserver<T> observer)
             {
-                return m_subscribe(observer);
+                var disposable =  m_subscribe(observer);
+
+                return Disposable.Create(() =>
+                {
+                    UnityEngine.Debug.Log("Disposing of the original disposable.");
+                    disposable.Dispose();
+                });
             }
         }
     }

@@ -26,12 +26,17 @@ namespace Tatedrez.Core
 
         public Turn PawnTurn => m_item;
         public Transform Transform => transform;
+        private SpriteRenderer m_spriteRenderer;
+
+        private const int s_orderLayerMove = 10;
+        private const int s_orderLayerIdle = 5;
 
         void Start()
         {
             m_core
                 .CurrentTurn
                 .Subscribe(turn => m_current = turn);
+            m_spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         public void OnPress()
@@ -63,17 +68,22 @@ namespace Tatedrez.Core
         {
             return Observable.Create<Unit>(observer => 
             {
+                m_spriteRenderer.sortingOrder = s_orderLayerMove;
                 HasMovedToDeck = true;
                 CurrentTile?.FreeTile();
                 CurrentTile = tile;
                 Vector3 position = CurrentTile.Position;
                 position.z = -1f;
                 StartCoroutine(LerpSequence(observer, position, 0.25f));
-
+                
                 SetBackground(false);
-                return Disposable.Empty;
+                return Disposable.Create(() => 
+                {
+                    m_spriteRenderer.sortingOrder = s_orderLayerIdle;
+                });
             });
         }
+
 
         private IEnumerator LerpSequence(IObserver<Unit> observable, Vector3 target, float period)
         {

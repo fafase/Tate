@@ -6,6 +6,7 @@ using Tatedrez.UI;
 using Tools;
 using UnityEngine;
 using Zenject;
+using Tatedrez.Core;
 
 namespace Tatedrez.Core
 {
@@ -51,8 +52,11 @@ namespace Tatedrez.Core
         public void MoveSelectedToPosition(ITile tile)
         {
             if (SelectedPawn == null) { return; }
+            Signal.Send(new PawnMovementSignal(true));
             m_movementService.ResetTiles();
-            SelectedPawn
+
+            IDisposable disposable = null;
+            disposable = SelectedPawn
                 .MoveToPosition(tile)
                 .Subscribe(new Observer<Unit>(onNext: _ => { },
                 onCompleted: () =>
@@ -63,8 +67,9 @@ namespace Tatedrez.Core
                     {
                         CurrentTurn.Value = nextTurn;
                     }
-
+                    disposable.Dispose();
                     SelectedPawn = null;
+                    Signal.Send(new PawnMovementSignal(false));
                 }))
                 .AddTo(m_compositeDisposable);
         }
