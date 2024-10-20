@@ -4,10 +4,14 @@ using System.Linq;
 using Tatedrez.Core;
 using Tools;
 using UnityEngine;
+using Zenject;
 
 public class InputService : MonoBehaviour
 {
+    [Inject] private ICoreController m_core;
     private List<InputBase> m_inputs;
+    private InputBase m_current;
+
     private void Start()
     {
         m_inputs = GetComponents<InputBase>().ToList();
@@ -27,12 +31,32 @@ public class InputService : MonoBehaviour
         SetInputs(predicate);
         Signal.Connect<EndGameSignal>(OnEndGame);
         Signal.Connect<PawnMovementSignal>(OnPawnMovement);
+        Signal.Connect<PauseGameSignal>(OnPause);
+
+        m_core
+           .CurrentTurn
+           .Subscribe(SetCurrentInput);
+
+        SetCurrentInput(m_core.CurrentTurn.Value);
     }
 
     private void OnDestroy()
     {
         Signal.Disconnect<EndGameSignal>(OnEndGame);
         Signal.Disconnect<PawnMovementSignal>(OnPawnMovement);
+        Signal.Disconnect<PauseGameSignal>(OnPause);
+    }
+
+    private void SetCurrentInput(Turn turn) 
+    {
+        m_inputs.ForEach(input => 
+        { 
+            input.enabled = turn == input.Turn;
+            if (input.enabled) 
+            {
+                m_current = input;
+            }
+        });
     }
 
     private void OnEndGame() 
@@ -53,5 +77,10 @@ public class InputService : MonoBehaviour
         var input = m_inputs.Find(input => predicate(input));
         if (input != null) input.enabled = false;
         m_inputs.Remove(input);
+    }
+
+    private void OnPause(PauseGameSignal data)
+    {
+        m_current.enabled = !data.IsPaused;
     }
 }

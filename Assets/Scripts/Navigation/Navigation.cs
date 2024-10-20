@@ -1,4 +1,5 @@
 using Rx;
+using Tatedrez.Core;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,10 +24,14 @@ public abstract class Navigation : MonoBehaviour
     private void OnPress()
     {
         m_loadButton.interactable = false;
-
+        Signal.Send(new PauseGameSignal(true));
         OpenPopup()
             .OnClose
-            .Subscribe(_=> m_loadButton.interactable=true)
+            .Subscribe(_=> 
+            { 
+                m_loadButton.interactable = true;
+                Signal.Send(new PauseGameSignal(false));
+            })
             .AddTo(m_compositeDisposable);
     }
 

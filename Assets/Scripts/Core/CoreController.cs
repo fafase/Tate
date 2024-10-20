@@ -27,10 +27,11 @@ namespace Tatedrez.Core
         
         public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
         private EndGameService m_endGameService;
-
+        private bool m_isPaused;
         void Start()
         {
             m_pawns = m_pawnContainer.GetComponentsInChildren<IPawn>(true).ToList();
+            Signal.Connect<PauseGameSignal>(OnPause);
         }
 
         void OnDestroy()
@@ -38,6 +39,7 @@ namespace Tatedrez.Core
             (CurrentTurn as IDisposable)?.Dispose();
             m_compositeDisposable?.Dispose();
             m_endGameService?.Dispose();
+            Signal.Disconnect<PauseGameSignal>(OnPause);
         }
 
         public void SetSelectedPawn(IPawn pawn)
@@ -87,6 +89,11 @@ namespace Tatedrez.Core
                     popup.OnClose.Subscribe(_ => m_endGameService.Dispose())
                     .AddTo(m_compositeDisposable);
                 });
+        }
+
+        private void OnPause(PauseGameSignal data)
+        {
+            m_isPaused = data.IsPaused;
         }
     }
     public struct Movement

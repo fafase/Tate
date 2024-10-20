@@ -1,13 +1,10 @@
-using Tatedrez.Core;
 using UnityEngine;
-using Zenject;
 
 public class InputDetection : InputBase
 {
     private Camera mainCamera;
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
         mainCamera = Camera.main;
     }
 
