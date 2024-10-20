@@ -21,7 +21,6 @@ namespace Rx
 
                 return Disposable.Create(() =>
                 {
-                    UnityEngine.Debug.Log("Disposing of the original disposable.");
                     disposable.Dispose();
                 });
             }

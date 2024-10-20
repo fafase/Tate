@@ -32,9 +32,10 @@ public class InputService : MonoBehaviour
     private void OnDestroy()
     {
         Signal.Disconnect<EndGameSignal>(OnEndGame);
+        Signal.Disconnect<PawnMovementSignal>(OnPawnMovement);
     }
 
-    private void OnEndGame(EndGameSignal data) 
+    private void OnEndGame() 
     {
         m_inputs.ForEach(input => input.enabled = false);    
     }

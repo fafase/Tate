@@ -76,7 +76,7 @@ namespace Tatedrez.Core
 
         public void SetWin(Turn pawnTurn)
         {
-            Signal.Send(new EndGameSignal());
+            Signal.Send<EndGameSignal>();
             m_endGameService = new EndGameService();
             m_endGameService.
                 EndLevelSequence(m_pawns, pawnTurn)
