@@ -1,12 +1,11 @@
+using Rx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tatedrez.UI;
 using Tools;
 using UnityEngine;
 using Zenject;
-using Tatedrez.UI;
-using Rx;
-using UnityEditor.PackageManager;
 
 namespace Tatedrez.Core
 {
@@ -26,7 +25,7 @@ namespace Tatedrez.Core
         private List<IPawn> m_pawns = new List<IPawn>();
         
         public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
-
+        private EndGameService m_endGameService;
 
         void Start()
         {
@@ -37,6 +36,7 @@ namespace Tatedrez.Core
         {
             (CurrentTurn as IDisposable)?.Dispose();
             m_compositeDisposable?.Dispose();
+            m_endGameService?.Dispose();
         }
 
         public void SetSelectedPawn(IPawn pawn)
@@ -67,14 +67,21 @@ namespace Tatedrez.Core
                     SelectedPawn = null;
                 }))
                 .AddTo(m_compositeDisposable);
-
-
         }
 
         public void SetWin(Turn pawnTurn)
         {
-            EndLevelPopup popup = (EndLevelPopup)m_popupManager.Show<EndLevelPopup>();
-            popup.InitWithWinner(pawnTurn);
+            Signal.Send(new EndGameSignal());
+            m_endGameService = new EndGameService();
+            m_endGameService.
+                EndLevelSequence(m_pawns, pawnTurn)
+                .Subscribe(_ => { }, () => 
+                {
+                    EndLevelPopup popup = (EndLevelPopup)m_popupManager.Show<EndLevelPopup>();
+                    popup.InitWithWinner(pawnTurn);
+                    popup.OnClose.Subscribe(_ => m_endGameService.Dispose())
+                    .AddTo(m_compositeDisposable);
+                });
         }
     }
     public struct Movement

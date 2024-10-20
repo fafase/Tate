@@ -75,40 +75,49 @@ namespace Rx
 
     public static class ObservableExtensions
     {
-        // A method to subscribe to IObservable<T> with only an Action for onNext.
         public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (onNext == null) throw new ArgumentNullException(nameof(onNext));
 
-            // Create a simple observer that only implements onNext
             return source.Subscribe(
                 new SimpleObserver<T>(onNext));
         }
 
-        // Internal class implementing IObserver<T> to call Action<T> for onNext
+        public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action onComplete = null, Action<Exception> onError = null)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (onNext == null) throw new ArgumentNullException(nameof(onNext));
+
+            return source.Subscribe(
+                new SimpleObserver<T>(onNext, onComplete, onError));
+        }
         private class SimpleObserver<T> : IObserver<T>
         {
-            private readonly Action<T> _onNext;
+            private readonly Action<T> m_onNext;
+            private readonly Action m_onCompleted;
+            private readonly Action<Exception> m_onError;
 
-            public SimpleObserver(Action<T> onNext)
+            public SimpleObserver(Action<T> onNext, Action onCompleted = null, Action<Exception> onError = null)
             {
-                _onNext = onNext;
+                m_onNext = onNext;
+                m_onCompleted = onCompleted;
+                m_onError = onError;
             }
 
             public void OnNext(T value)
             {
-                _onNext(value); // Call the Action with the emitted value
+                m_onNext(value); 
             }
 
             public void OnError(Exception error)
             {
-                
+                m_onError(error);
             }
 
             public void OnCompleted()
             {
-               
+               m_onCompleted();
             }
         }
     }

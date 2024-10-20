@@ -34,6 +34,12 @@ namespace Rx
             return new Unsubscriber(observers, observer);
         }
 
+        public IDisposable Subscribe(Action<T> onNext, Action<Exception> onError = null, Action onCompleted = null)
+        {
+            var observer = new Observer<T>(onNext, onError, onCompleted);
+            return Subscribe(observer);
+        }
+
         public void Notify(T value)
         {
             foreach (var observer in observers)

@@ -25,6 +25,7 @@ namespace Tatedrez.Core
         public PawnType PawnType => m_pawnType;
 
         public Turn PawnTurn => m_item;
+        public Transform Transform => transform;
 
         void Start()
         {
@@ -108,5 +109,6 @@ namespace Tatedrez.Core
         bool HasMovedToDeck { get; }
         Turn PawnTurn { get; }
         PawnType PawnType { get; }
+        Transform Transform { get; }
     }
 }
