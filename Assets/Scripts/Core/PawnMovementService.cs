@@ -29,7 +29,15 @@ namespace Tatedrez.Core
             }
             foreach(var pos in results) 
             {
-                m_tiles[pos.row, pos.col].SetTileBackground();
+                m_tiles[pos.row, pos.col].SetTileBackground(true);
+            }
+        }
+
+        public void ResetTiles() 
+        {
+            foreach(ITile tile in m_tiles) 
+            {
+                tile.SetTileBackground(false);
             }
         }
 
@@ -65,5 +73,6 @@ public interface IMovementService
 {
     bool HasPotentialMove(List<IPawn> m_pawns, Turn nextTurn);
     void SetPotentialTiles(IPawn pawn);
+    void ResetTiles();
 }
 

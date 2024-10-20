@@ -64,9 +64,9 @@ namespace Tatedrez.Core
             GridY = y;
         }
 
-        public void SetTileBackground() 
+        public void SetTileBackground(bool state) 
         {
-            m_availableTile.enabled = true;
+            m_availableTile.enabled = state;
         }
     }
 
@@ -79,6 +79,6 @@ namespace Tatedrez.Core
         int GridY { get; }
         void FreeTile();
         IPawn CurrentPawn { get; }
-        void SetTileBackground();
+        void SetTileBackground(bool state);
     }
 }

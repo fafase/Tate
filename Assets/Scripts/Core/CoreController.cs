@@ -51,7 +51,7 @@ namespace Tatedrez.Core
         public void MoveSelectedToPosition(ITile tile)
         {
             if (SelectedPawn == null) { return; }
-
+            m_movementService.ResetTiles();
             SelectedPawn
                 .MoveToPosition(tile)
                 .Subscribe(new Observer<Unit>(onNext: _ => { },

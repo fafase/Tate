@@ -1,4 +1,3 @@
-using Rx;
 using System.Collections.Generic;
 using System.Linq;
 using Tatedrez.Core;
@@ -22,6 +21,11 @@ public class InputService : MonoBehaviour
                 break;
         }
         Signal.Connect<EndGameSignal>(OnEndGame);
+    }
+
+    private void OnDestroy()
+    {
+        Signal.Disconnect<EndGameSignal>(OnEndGame);
     }
 
     private void OnEndGame(EndGameSignal data) 
