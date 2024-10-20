@@ -2,6 +2,25 @@ using System;
 using System.Collections.Generic;
 namespace Rx 
 {
+    public static class Observable 
+    {
+        public static IObservable<T> Create<T>(Func<IObserver<T>, IDisposable> subscribe) 
+        {
+            return new AnonymousObservable<T>(subscribe);
+        }
+        private class AnonymousObservable<T> : IObservable<T> 
+        {
+            private readonly Func<IObserver<T>, IDisposable> m_subscribe;
+            public AnonymousObservable(Func<IObserver<T>, IDisposable> subscribe)
+            {
+                m_subscribe = subscribe;
+            }
+            public IDisposable Subscribe(IObserver<T> observer)
+            {
+                return m_subscribe(observer);
+            }
+        }
+    }
     public class Observable<T> : IObservable<T>
     {
         private readonly List<IObserver<T>> observers = new List<IObserver<T>>();
