@@ -20,20 +20,21 @@ public class PotentialMoveTest : PawnMovementTest
     public void Potential_HasMove()
     {
         TestSetup(0);
-
+        
         bool result = m_move.HasPotentialMove(m_pawns, Turn.Player1);
         Assert.IsTrue(result);
     }
 
     private void TestSetup(int y) 
     {
+        m_move.JumpOver = false;
         m_core.AllPawnsOnDeck.Returns(true);
         var grid = new IPawn[3, 3];
         m_grid.Grid.Returns(grid);
 
         m_pawns = new List<IPawn>() {
-            CreatePawn(PawnType.Horse, 1, 1),
-            CreatePawn(PawnType.Bishop, 0, 0),
+            CreatePawn(PawnType.Horse, 1, 0),
+            CreatePawn(PawnType.Bishop, 0, 1),
             CreatePawn(PawnType.Tower, 0, 2)
         };
 

@@ -8,6 +8,7 @@ namespace Tatedrez.Core
     {
         private IGrid m_grid;
         private ICoreController m_core;
+        public bool JumpOver { get; set; } = false;
         public PawnMovement(ICoreController core, IGrid grid)
         {
             m_core = core;
@@ -23,9 +24,9 @@ namespace Tatedrez.Core
             switch (pawn.PawnType)
             {
                 case PawnType.Tower:
-                    return TowerMovement(pawn.CurrentTile);
+                    return JumpOver ? TowerMovementOver(pawn.CurrentTile) : TowerMovement(pawn.CurrentTile);
                 case PawnType.Bishop:
-                    return BishopMovement(pawn.CurrentTile);
+                    return JumpOver ? BishopMovementOver(pawn.CurrentTile) : BishopMovement(pawn.CurrentTile);
                 case PawnType.Horse:
                     return HorseMovement(pawn.CurrentTile);
             }
@@ -39,7 +40,7 @@ namespace Tatedrez.Core
             return (new HashSet<(int row, int col)>(), tile.GridX, tile.GridY, grid, grid.GetLength(0));
         }
 
-        private List<(int row, int col)> TowerMovement(ITile tile)
+        private List<(int row, int col)> TowerMovementOver(ITile tile)
         {
             var(tiles, x, y, grid, size) = Setup(tile);
 
@@ -58,29 +59,83 @@ namespace Tatedrez.Core
             return tiles.ToList();
         }
 
-        //private List<(int row, int col)> BishopMovement(ITile tile)
-        //{
-        //    var (tiles, x, y, grid, size) = Setup(tile);
+        private List<(int row, int col)> TowerMovement(ITile tile)
+        {
+            var (tiles, x, y, grid, size) = Setup(tile);
 
-        //    for (int i = 0; i < size; i++)
-        //    {
-        //        for (int j = 0; j < size; j++)
-        //        {
-        //            if (Math.Abs(i - x) == Math.Abs(j - y))
-        //            {
-        //                if (i == x || j == y)
-        //                {
-        //                    continue;
-        //                }
-        //                if (grid[i, j] == null)
-        //                {
-        //                    tiles.Add((i, j));
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return tiles.ToList();
-        //}
+            for (int i = y + 1; i < size; i++)
+            {
+                if (grid[x, i] == null)
+                {
+                    tiles.Add((x, i));
+                }
+                else
+                {
+                    break; 
+                }
+            }
+            for (int i = y - 1; i >= 0; i--)
+            {
+                if (grid[x, i] == null)
+                {
+                    tiles.Add((x, i));
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = x - 1; i >= 0; i--)
+            {
+                if (grid[i, y] == null)
+                {
+                    tiles.Add((i, y));
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = x + 1; i < size; i++)
+            {
+                if (grid[i, y] == null)
+                {
+                    tiles.Add((i, y));
+                }
+                else
+                {
+                    break; 
+                }
+            }
+
+            return tiles.ToList();
+        }
+
+
+        private List<(int row, int col)> BishopMovementOver(ITile tile)
+        {
+            var (tiles, x, y, grid, size) = Setup(tile);
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (Math.Abs(i - x) == Math.Abs(j - y))
+                    {
+                        if (i == x || j == y)
+                        {
+                            continue;
+                        }
+                        if (grid[i, j] == null)
+                        {
+                            tiles.Add((i, j));
+                        }
+                    }
+                }
+            }
+            return tiles.ToList();
+        }
+
         private List<(int row, int col)> BishopMovement(ITile tile)
         {
             HashSet<(int row, int col)> tiles = new HashSet<(int row, int col)>();

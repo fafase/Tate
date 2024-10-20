@@ -19,6 +19,14 @@ public class PawnMovementTest
         m_pawn = Substitute.For<IPawn>();
     }
 
+    [OneTimeTearDown]
+    public void OneTimeTearDown() 
+    {
+        m_core = null;
+        m_grid = null;
+        m_move = null;
+        m_pawn = null;
+    }
     protected void SetPawn(PawnType type, int x, int y)
     {
         m_pawn.PawnType.Returns(type);
