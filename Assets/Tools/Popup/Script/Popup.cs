@@ -39,6 +39,7 @@ namespace Tools
             AddAnimation(m_closeAnimation);
 
             m_state = State.Idle;
+            Signal.Send(new AudioSignal(AudioSignal.Swoosh));
             StartCoroutine(OpenSequence());
         }
 
@@ -86,6 +87,7 @@ namespace Tools
 
         public void Close(bool closeImmediate = false) 
         {
+            Signal.Send(new AudioSignal(AudioSignal.Swoosh));
             m_popupManager.Close(this);
             if (closeImmediate) 
             {
