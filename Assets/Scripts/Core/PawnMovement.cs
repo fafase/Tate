@@ -58,29 +58,89 @@ namespace Tatedrez.Core
             return tiles.ToList();
         }
 
+        //private List<(int row, int col)> BishopMovement(ITile tile)
+        //{
+        //    var (tiles, x, y, grid, size) = Setup(tile);
+
+        //    for (int i = 0; i < size; i++)
+        //    {
+        //        for (int j = 0; j < size; j++)
+        //        {
+        //            if (Math.Abs(i - x) == Math.Abs(j - y))
+        //            {
+        //                if (i == x || j == y)
+        //                {
+        //                    continue;
+        //                }
+        //                if (grid[i, j] == null)
+        //                {
+        //                    tiles.Add((i, j));
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return tiles.ToList();
+        //}
         private List<(int row, int col)> BishopMovement(ITile tile)
         {
-            var (tiles, x, y, grid, size) = Setup(tile);
+            HashSet<(int row, int col)> tiles = new HashSet<(int row, int col)>();
+            int x = tile.GridX;
+            int y = tile.GridY;
+            IPawn[,] grid = m_grid.Grid;
+            int size = grid.GetLength(0);
 
-            for (int i = 0; i < size; i++)
+            for (int i = 1; x - i >= 0 && y - i >= 0; i++)
             {
-                for (int j = 0; j < size; j++)
+                if (grid[x - i, y - i] == null)
                 {
-                    if (Math.Abs(i - x) == Math.Abs(j - y))
-                    {
-                        if (i == x || j == y)
-                        {
-                            continue;
-                        }
-                        if (grid[i, j] == null)
-                        {
-                            tiles.Add((i, j));
-                        }
-                    }
+                    tiles.Add((x - i, y - i));
+                }
+                else
+                {
+                    break; 
                 }
             }
+
+            for (int i = 1; x - i >= 0 && y + i < size; i++)
+            {
+                if (grid[x - i, y + i] == null)
+                {
+                    tiles.Add((x - i, y + i));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            for (int i = 1; x + i < size && y - i >= 0; i++)
+            {
+                if (grid[x + i, y - i] == null)
+                {
+                    tiles.Add((x + i, y - i));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            for (int i = 1; x + i < size && y + i < size; i++)
+            {
+                if (grid[x + i, y + i] == null)
+                {
+                    tiles.Add((x + i, y + i));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
             return tiles.ToList();
         }
+
+
 
         private List<(int row, int col)> HorseMovement(ITile tile) 
         {
