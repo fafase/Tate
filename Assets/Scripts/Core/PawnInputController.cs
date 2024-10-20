@@ -60,19 +60,21 @@ namespace Tatedrez.Core
 
         public IObservable<Unit> MoveToPosition(ITile tile)
         {
-            var observable = new Observable<Unit>();
-            HasMovedToDeck = true;
-            CurrentTile?.FreeTile();
-            CurrentTile = tile;
-            Vector3 position = CurrentTile.Position;
-            position.z = -1f;
-            StartCoroutine(LerpSequence(observable, position, 0.25f));
+            return Observable.Create<Unit>(observer => 
+            {
+                HasMovedToDeck = true;
+                CurrentTile?.FreeTile();
+                CurrentTile = tile;
+                Vector3 position = CurrentTile.Position;
+                position.z = -1f;
+                StartCoroutine(LerpSequence(observer, position, 0.25f));
 
-            SetBackground(false);
-            return observable;
+                SetBackground(false);
+                return Disposable.Empty;
+            });
         }
 
-        private IEnumerator LerpSequence(Observable<Unit> observable, Vector3 target, float period)
+        private IEnumerator LerpSequence(IObserver<Unit> observable, Vector3 target, float period)
         {
             float ratio = 0f;
 
@@ -87,11 +89,11 @@ namespace Tatedrez.Core
                 float scaleRatio = Mathf.Sin(ratio * Mathf.PI); 
                 transform.localScale = Vector3.Lerp(scale, maxScale, scaleRatio);
 
-                observable.Notify(Unit.Default);
+                observable.OnNext(Unit.Default);
                 yield return null;
             }
             transform.position = target;
-            observable.Complete();
+            observable.OnCompleted();
         } 
     }
 
