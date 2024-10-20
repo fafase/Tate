@@ -1,6 +1,5 @@
-using Tools;
 
-namespace Tatedrez.Core
+namespace Tools
 {
     public class EndGameSignal : SignalData
     {
