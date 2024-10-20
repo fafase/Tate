@@ -1,6 +1,7 @@
 using Rx;
 using System;
 using System.Collections;
+using Tools;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -53,6 +54,7 @@ namespace Tatedrez.Core
             {
                 m_selected.SetBackground(false);
             }
+            Signal.Send(new AudioSignal(AudioSignal.Tap));
             m_selected = this;
             m_core.SetSelectedPawn(this);
             SetBackground(!m_background.activeSelf);
@@ -68,6 +70,7 @@ namespace Tatedrez.Core
         {
             return Observable.Create<Unit>(observer => 
             {
+                Signal.Send(new AudioSignal(AudioSignal.Bloop));
                 m_spriteRenderer.sortingOrder = s_orderLayerMove;
                 HasMovedToDeck = true;
                 CurrentTile?.FreeTile();

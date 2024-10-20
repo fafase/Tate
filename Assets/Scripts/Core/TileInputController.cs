@@ -1,4 +1,5 @@
 using System;
+using Tools;
 using UnityEngine;
 using Zenject;
 
@@ -26,6 +27,7 @@ namespace Tatedrez.Core
         }
         public void OnPress()
         {
+            Signal.Send(new AudioSignal(AudioSignal.Tap));
             if (!m_core.AllPawnsOnDeck) 
             {
                 if (m_core.SelectedPawn != null && IsAvailable)
