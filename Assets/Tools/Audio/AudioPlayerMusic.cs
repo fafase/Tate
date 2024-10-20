@@ -25,13 +25,7 @@ namespace Tools.Audio
         {
             DontDestroyOnLoad(this);
             SetMusicSources();
-
-            //StartAmbianceMusic()
-            //    .Subscribe(_ => { })
-            //    .AddTo(m_compositeDisposable);
             StartAmbianceMusic().Forget();
-            BindEndLevel();
-            //BindSceneLoading();
         }
 
         private void OnDestroy()
@@ -72,10 +66,6 @@ namespace Tools.Audio
             audioSource.volume = 1f;
         }
 
-        private void BindEndLevel()
-        {
-            //Signal.Connect<EndGameSignal>(Fade);
-        }
 
         private async UniTask FadeMusic(string clip)
         {
