@@ -6,7 +6,6 @@ using Tatedrez.UI;
 using Tools;
 using UnityEngine;
 using Zenject;
-using Tatedrez.Core;
 
 namespace Tatedrez.Core
 {
@@ -19,18 +18,22 @@ namespace Tatedrez.Core
         [SerializeField] private GameObject m_tileContainer;
         private CompositeDisposable m_compositeDisposable = new CompositeDisposable();
         public IPawn SelectedPawn { get; private set; }
-
+        public List<IPawn> Pawns => m_pawns;
         public IReactiveProperty<Turn> CurrentTurn { get; private set; } = new ReactiveProperty<Turn>(Turn.Player1);
         public IReactiveProperty<Movement> LastMovement { get; private set; } = new ReactiveProperty<Movement>();
+
+        public ITile[,] Tiles { get; private set; } = new ITile[3,3]; 
 
         private List<IPawn> m_pawns = new List<IPawn>();
         
         public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
         private EndGameService m_endGameService;
         private bool m_isPaused;
+
         void Start()
         {
             m_pawns = m_pawnContainer.GetComponentsInChildren<IPawn>(true).ToList();
+            GenerateTileGrid();
             Signal.Connect<PauseGameSignal>(OnPause);
         }
 
@@ -54,7 +57,7 @@ namespace Tatedrez.Core
         public void MoveSelectedToPosition(ITile tile)
         {
             if (SelectedPawn == null) { return; }
-            Signal.Send(new PawnMovementSignal(true));
+            Signal.Send(new PawnMovementSignal(true, SelectedPawn, tile));
             m_movementService.ResetTiles();
 
             IDisposable disposable = null;
@@ -70,8 +73,8 @@ namespace Tatedrez.Core
                         CurrentTurn.Value = nextTurn;
                     }
                     disposable.Dispose();
+                    Signal.Send(new PawnMovementSignal(false, SelectedPawn, tile));
                     SelectedPawn = null;
-                    Signal.Send(new PawnMovementSignal(false));
                 }))
                 .AddTo(m_compositeDisposable);
         }
@@ -95,6 +98,14 @@ namespace Tatedrez.Core
         {
             m_isPaused = data.IsPaused;
         }
+        private void GenerateTileGrid() 
+        {
+            var tiles = m_tileContainer.GetComponentsInChildren<ITile>(true);
+            foreach(ITile tile in tiles) 
+            {
+                Tiles[tile.GridX, tile.GridY] = tile;
+            }
+        }
     }
     public struct Movement
     {
@@ -117,5 +128,7 @@ namespace Tatedrez.Core
         IReactiveProperty<Turn> CurrentTurn { get; }
         IReactiveProperty<Movement> LastMovement { get; }
         bool AllPawnsOnDeck { get; }
+        List<IPawn> Pawns { get; }
+        ITile[,] Tiles { get; }
     }
 }
