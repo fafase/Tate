@@ -11,7 +11,7 @@ public class InputService : MonoBehaviour
     [Inject] private ICoreController m_core;
     private List<InputBase> m_inputs;
     private InputBase m_current;
-
+   
     private void Start()
     {
         m_inputs = GetComponents<InputBase>().ToList();
@@ -53,8 +53,8 @@ public class InputService : MonoBehaviour
     {
         m_inputs.ForEach(input => 
         { 
-            input.enabled = turn == input.Turn;
-            if (input.enabled) 
+            //input.enabled = turn == input.Turn;
+            if (turn == input.Turn) 
             {
                 m_current = input;
             }
@@ -71,6 +71,10 @@ public class InputService : MonoBehaviour
         if (data.StartMovement)
         {
             m_inputs.ForEach(input => input.enabled = false);
+        }
+        else 
+        {
+            m_current.enabled = true;
         }
     }
 
