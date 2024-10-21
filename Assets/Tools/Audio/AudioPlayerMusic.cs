@@ -7,8 +7,7 @@ using UnityEngine;
 
 namespace Tools.Audio
 {
-
-    public class AudioPlayerMusic : SimpleSingleton<AudioPlayerMusic>
+    public class AudioPlayerMusic : MonoBehaviour
     {
         [SerializeField] private float m_maxVolume = 0.8f;
         [SerializeField] private float m_volumeIncreaseSpeed = 1f;
@@ -23,7 +22,6 @@ namespace Tools.Audio
 
         private void Start()
         {
-            DontDestroyOnLoad(this);
             SetMusicSources();
             StartAmbianceMusic().Forget();
         }

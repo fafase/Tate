@@ -76,3 +76,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_popupManager: {fileID: 3167489094908483523, guid: 3b0b6d54bc06f1e4b9835b68e8759718, type: 3}
   m_loadingService: {fileID: 3109671050644710081, guid: 8db26b6316fcb254ab8406a7bdda2b5e, type: 3}
+  m_audioManager: {fileID: 7324148350344804486, guid: 2249f9fc4a65892408edad1ec84253c2, type: 3}

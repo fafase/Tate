@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Tools.Audio
 {
-    public class AudioManager : SimpleSingleton<AudioManager>
+    public class AudioManager : MonoBehaviour 
     {
         [SerializeField] private GameObject m_audioSourceContainer;
         [Header("SFX")]
@@ -15,7 +15,6 @@ namespace Tools.Audio
         private List<AudioSource> m_sources;
         private void Start()
         {
-            DontDestroyOnLoad(this);
             m_sources = new List<AudioSource>();
             PopulateAudioDictionary();
             BindAudioSignal();
