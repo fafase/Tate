@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Tatedrez.Core
 {
@@ -19,7 +20,19 @@ namespace Tatedrez.Core
         {
             if (!m_core.AllPawnsOnDeck)
             {
-                return new List<(int row, int col)>();
+                List<(int row, int col)> list = new();
+                int size = m_grid.Grid.GetLength(0);
+                for(int x = 0; x < size; x++) 
+                {
+                    for(int y = 0; y < size; y++) 
+                    {
+                        if (m_grid.Grid[x, y] == null) 
+                        {
+                            list.Add((x, y));
+                        }
+                    }
+                }
+                return list;
             }
             switch (pawn.PawnType)
             {
