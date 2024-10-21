@@ -1,19 +1,22 @@
 using Tatedrez.Core;
 using UnityEngine;
 
-public class InputBase : MonoBehaviour
+namespace Tatedrez.Input
 {
-    [SerializeField] private InputType m_inputType;
-    [SerializeField] private Turn m_turn;
-
-    public InputType InputType => m_inputType;
-    public Turn Turn => m_turn;
-    public virtual void StopInput() 
+    public class InputBase : MonoBehaviour
     {
-        enabled = false;
+        [SerializeField] private InputType m_inputType;
+        [SerializeField] private Turn m_turn;
+
+        public InputType InputType => m_inputType;
+        public Turn Turn => m_turn;
+        public virtual void StopInput()
+        {
+            enabled = false;
+        }
     }
-}
-public enum InputType 
-{
-    Player, NPC
+    public enum InputType
+    {
+        Player, NPC
+    }
 }

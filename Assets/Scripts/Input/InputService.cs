@@ -6,84 +6,87 @@ using Tools;
 using UnityEngine;
 using Zenject;
 
-public class InputService : MonoBehaviour
+namespace Tatedrez.Input
 {
-    [Inject] private ICoreController m_core;
-    private List<InputBase> m_inputs;
-    private InputBase m_current;
-   
-    private void Start()
+    public class InputService : MonoBehaviour
     {
-        m_inputs = GetComponents<InputBase>().ToList();
+        [Inject] private ICoreController m_core;
+        private List<InputBase> m_inputs;
+        private InputBase m_current;
 
-        string value = PlayerPrefs.GetString(Player.Key);
-        Predicate<InputBase> predicate = null;
-        switch (value) 
+        private void Start()
         {
-            case Player.Single:
-                predicate = new Predicate<InputBase>(input => 
-                    input.InputType.Equals(InputType.Player) && input.Turn.Equals(Turn.Player2));
-                break;
-            case Player.Two:
-            default:
-                predicate = new Predicate<InputBase>(input => input.InputType.Equals(InputType.NPC));
-                break;
+            m_inputs = GetComponents<InputBase>().ToList();
 
-        }
-        SetInputs(predicate);
-        Signal.Connect<EndGameSignal>(OnEndGame);
-        Signal.Connect<PawnMovementSignal>(OnPawnMovement);
-        Signal.Connect<PauseGameSignal>(OnPause);
-
-        m_core
-           .CurrentTurn
-           .Subscribe(SetCurrentInput);
-
-        SetCurrentInput(m_core.CurrentTurn.Value);
-    }
-
-    private void OnDestroy()
-    {
-        Signal.Disconnect<EndGameSignal>(OnEndGame);
-        Signal.Disconnect<PawnMovementSignal>(OnPawnMovement);
-        Signal.Disconnect<PauseGameSignal>(OnPause);
-    }
-
-    private void SetCurrentInput(Turn turn) 
-    {
-        m_inputs.ForEach(input => 
-        { 
-            input.enabled = turn == input.Turn;
-            if (turn == input.Turn) 
+            string value = PlayerPrefs.GetString(Player.Key);
+            Predicate<InputBase> predicate = null;
+            switch (value)
             {
-                m_current = input;
+                case Player.Single:
+                    predicate = new Predicate<InputBase>(input =>
+                        input.InputType.Equals(InputType.Player) && input.Turn.Equals(Turn.Player2));
+                    break;
+                case Player.Two:
+                default:
+                    predicate = new Predicate<InputBase>(input => input.InputType.Equals(InputType.NPC));
+                    break;
+
             }
-        });
-    }
+            SetInputs(predicate);
+            Signal.Connect<EndGameSignal>(OnEndGame);
+            Signal.Connect<PawnMovementSignal>(OnPawnMovement);
+            Signal.Connect<PauseGameSignal>(OnPause);
 
-    private void OnEndGame() 
-    {
-        m_inputs.ForEach(input => input.StopInput());    
+            m_core
+               .CurrentTurn
+               .Subscribe(SetCurrentInput);
 
-    }
-
-    private void OnPawnMovement(PawnMovementSignal data) 
-    {
-        if (data.StartMovement)
-        {
-            m_inputs.ForEach(input => input.enabled = false);
+            SetCurrentInput(m_core.CurrentTurn.Value);
         }
-    }
 
-    private void SetInputs(Predicate<InputBase> predicate) 
-    {
-        var input = m_inputs.Find(input => predicate(input));
-        if (input != null) input.enabled = false;
-        m_inputs.Remove(input);
-    }
+        private void OnDestroy()
+        {
+            Signal.Disconnect<EndGameSignal>(OnEndGame);
+            Signal.Disconnect<PawnMovementSignal>(OnPawnMovement);
+            Signal.Disconnect<PauseGameSignal>(OnPause);
+        }
 
-    private void OnPause(PauseGameSignal data)
-    {
-        m_current.enabled = !data.IsPaused;
+        private void SetCurrentInput(Turn turn)
+        {
+            m_inputs.ForEach(input =>
+            {
+                input.enabled = turn == input.Turn;
+                if (turn == input.Turn)
+                {
+                    m_current = input;
+                }
+            });
+        }
+
+        private void OnEndGame()
+        {
+            m_inputs.ForEach(input => input.StopInput());
+
+        }
+
+        private void OnPawnMovement(PawnMovementSignal data)
+        {
+            if (data.StartMovement)
+            {
+                m_inputs.ForEach(input => input.enabled = false);
+            }
+        }
+
+        private void SetInputs(Predicate<InputBase> predicate)
+        {
+            var input = m_inputs.Find(input => predicate(input));
+            if (input != null) input.enabled = false;
+            m_inputs.Remove(input);
+        }
+
+        private void OnPause(PauseGameSignal data)
+        {
+            m_current.enabled = !data.IsPaused;
+        }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using Tools;
 using UnityEngine;
 using Zenject;
+using Tatedrez.Input;
 
 namespace Tatedrez.Core
 {
