@@ -53,7 +53,7 @@ public class InputService : MonoBehaviour
     {
         m_inputs.ForEach(input => 
         { 
-            //input.enabled = turn == input.Turn;
+            input.enabled = turn == input.Turn;
             if (turn == input.Turn) 
             {
                 m_current = input;
@@ -71,10 +71,6 @@ public class InputService : MonoBehaviour
         if (data.StartMovement)
         {
             m_inputs.ForEach(input => input.enabled = false);
-        }
-        else 
-        {
-            m_current.enabled = true;
         }
     }
 

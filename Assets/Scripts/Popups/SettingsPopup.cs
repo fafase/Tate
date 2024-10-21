@@ -46,7 +46,6 @@ namespace Tatedrez.UI
         private void OnContinuePress() 
         {
             Close();
-            Signal.Send(new PauseGameSignal(false));
         }
     }
 }
