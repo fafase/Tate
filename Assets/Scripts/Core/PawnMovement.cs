@@ -239,7 +239,7 @@ namespace Tatedrez.Core
         public bool HasPotentialMove(List<IPawn> pawns, Turn turn)
         {
             return pawns
-                    .Where(p => p.PawnTurn.Equals(turn))
+                    .Where(p => p.Owner.Equals(turn))
                     .Any(pawn => CheckForAllowedMoves(pawn).Count > 0);
         }
     }
