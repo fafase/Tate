@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using Rx;
+using Tate.Loading;
 
 namespace Tatedrez.UI
 {

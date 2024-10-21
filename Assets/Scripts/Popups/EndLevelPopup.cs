@@ -7,6 +7,7 @@ using System;
 using TMPro;
 using Zenject;
 using Cysharp.Threading.Tasks;
+using Tate.Loading;
 
 namespace Tatedrez.UI
 {

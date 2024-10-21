@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace Tools
 {
-    public class SceneLoading : ISceneLoading, IDisposable
+    public class SceneLoading :  IDisposable
     {
         private string m_current;
         private CancellationToken m_cancellationToken;
@@ -20,11 +20,11 @@ namespace Tools
             m_cancellationToken = m_source.Token;
         }
 
-        public virtual async UniTask LoadMeta(IProgress<float> progress = null) 
-            => await Load("Meta", progress);
+        //public virtual async UniTask LoadMeta(IProgress<float> progress = null) 
+        //    => await Load("Meta", progress);
   
-        public virtual async UniTask LoadCore(IProgress<float> progress = null) 
-            => await Load("Core", progress);
+        //public virtual async UniTask LoadCore(IProgress<float> progress = null) 
+        //    => await Load("Core", progress);
 
 
         public async UniTask LoadScene(string scene, IProgress<float> progress = null)
@@ -64,12 +64,7 @@ namespace Tools
             m_source?.Cancel();
         }
     }
-    public interface ISceneLoading 
-    {
-        UniTask LoadCore(IProgress<float> progress = null);
-        UniTask LoadMeta(IProgress<float> progress = null);
-        UniTask LoadScene(string scene, IProgress<float> progress = null);
-    }
+
 
     public class SceneChangeSignal : SignalData 
     {

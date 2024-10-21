@@ -75,3 +75,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_popupManager: {fileID: 3167489094908483523, guid: 3b0b6d54bc06f1e4b9835b68e8759718, type: 3}
+  m_loadingService: {fileID: 3109671050644710081, guid: 8db26b6316fcb254ab8406a7bdda2b5e, type: 3}
