@@ -1,6 +1,5 @@
 using Tatedrez.Core;
 using UnityEngine;
-using Zenject;
 
 public class InputBase : MonoBehaviour
 {
@@ -9,6 +8,10 @@ public class InputBase : MonoBehaviour
 
     public InputType InputType => m_inputType;
     public Turn Turn => m_turn;
+    public virtual void StopInput() 
+    {
+        enabled = false;
+    }
 }
 public enum InputType 
 {

@@ -9,14 +9,13 @@ namespace Tatedrez.Core
     public class PawnMovementService : MonoBehaviour, IMovementService
     {
         [Inject] private ICoreController m_core;
+        [Inject] private IGrid m_grid;
         private ITile[,] m_tiles;
         private PawnMovement m_movement;
-        private GridController m_grid;
 
         void Start()
         {
             PopulateTileArray();
-            m_grid = new GridController(m_core);
             m_movement = new PawnMovement(m_core, m_grid);
         }
 
@@ -67,6 +66,8 @@ namespace Tatedrez.Core
                 Debug.LogError("Something wrong with the tiles, cannot populate the array properly, check that width and length are equal");
             }
         }
+
+        public List<(int row, int col)> CheckForAllowedMoves(IPawn pawn) => m_movement.CheckForAllowedMoves(pawn);
     }
 }
 public interface IMovementService
@@ -74,5 +75,6 @@ public interface IMovementService
     bool HasPotentialMove(List<IPawn> m_pawns, Turn nextTurn);
     void SetPotentialTiles(IPawn pawn);
     void ResetTiles();
+    List<(int row, int col)> CheckForAllowedMoves(IPawn pawn);
 }
 

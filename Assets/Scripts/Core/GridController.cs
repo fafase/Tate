@@ -1,28 +1,47 @@
+using Tools;
+using Zenject;
+using System;
+
 namespace Tatedrez.Core
 {
-    public class GridController : IGrid
+    public class GridController : IGrid, IInitializable, IDisposable
     {
+        [Inject] private ICoreController m_core;
         private IPawn[,] m_grid = new IPawn[3, 3];
-        private ICoreController m_core;
-
+        private bool m_isDisposed = false;
         public IPawn[,] Grid => m_grid;
 
-        public GridController(ICoreController core)
+        public void Initialize()
+        {
+            Signal.Connect<PawnMovementSignal>(OnPawnMovement);
+        }
+        public void Dispose() 
+        {
+            if(m_isDisposed) return;
+            m_isDisposed = true;
+            Signal.Disconnect <PawnMovementSignal>(OnPawnMovement);
+            m_grid = null;
+        }
+        public void InitWithController(ICoreController core) 
         {
             m_core = core;
-            m_core.LastMovement.Subscribe(OnPawnMovement);
         }
 
-        private void OnPawnMovement(Movement movement)
+
+        private void OnPawnMovement(PawnMovementSignal movement)
         {
-            IPawn pawn = movement.pawn;
-            var pos = FindInstance(movement.pawn);
+            if(movement.StartMovement)
+            {
+                return;
+            }
+            IPawn pawn = movement.Pawn;
+            var pos = FindInstance(movement.Pawn);
             if (pos != null)
             {
                 m_grid[pos.Value.row, pos.Value.col] = null;
             }
-            ITile tile = movement.tile;
-            m_grid[tile.GridX, tile.GridY] = movement.pawn;
+            ITile tile = movement.Tile;
+            m_grid[tile.GridX, tile.GridY] = movement.Pawn;
             CheckWin(pawn.PawnTurn);
         }
 
@@ -43,19 +62,17 @@ namespace Tatedrez.Core
 
         public void CheckWin(Turn turn)
         {
-            // Check rows and columns
             for (int i = 0; i < 3; i++)
             {
-                if ((m_grid[i, 0]?.PawnTurn == turn && m_grid[i, 1]?.PawnTurn == turn && m_grid[i, 2]?.PawnTurn == turn) || // Check row
-                    (m_grid[0, i]?.PawnTurn == turn && m_grid[1, i]?.PawnTurn == turn && m_grid[2, i]?.PawnTurn == turn))   // Check column
+                if ((m_grid[i, 0]?.PawnTurn == turn && m_grid[i, 1]?.PawnTurn == turn && m_grid[i, 2]?.PawnTurn == turn) || 
+                    (m_grid[0, i]?.PawnTurn == turn && m_grid[1, i]?.PawnTurn == turn && m_grid[2, i]?.PawnTurn == turn))   
                 {
                     m_core.SetWin(turn);
                 }
             }
 
-            // Check diagonals
-            if ((m_grid[0, 0]?.PawnTurn == turn && m_grid[1, 1]?.PawnTurn == turn && m_grid[2, 2]?.PawnTurn == turn) || // Check main diagonal
-                (m_grid[0, 2]?.PawnTurn == turn && m_grid[1, 1]?.PawnTurn == turn && m_grid[2, 0]?.PawnTurn == turn))   // Check anti-diagonal
+            if ((m_grid[0, 0]?.PawnTurn == turn && m_grid[1, 1]?.PawnTurn == turn && m_grid[2, 2]?.PawnTurn == turn) || 
+                (m_grid[0, 2]?.PawnTurn == turn && m_grid[1, 1]?.PawnTurn == turn && m_grid[2, 0]?.PawnTurn == turn))   
             {
                 m_core.SetWin(turn);
             }

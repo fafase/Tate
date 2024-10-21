@@ -63,7 +63,8 @@ public class InputService : MonoBehaviour
 
     private void OnEndGame() 
     {
-        m_inputs.ForEach(input => input.enabled = false);    
+        m_inputs.ForEach(input => input.StopInput());    
+
     }
 
     private void OnPawnMovement(PawnMovementSignal data) 

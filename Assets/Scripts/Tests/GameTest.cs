@@ -10,7 +10,8 @@ public class GameTest
     public void OneTimeSetUp() 
     {
         m_coreController = Substitute.For<ICoreController>();
-        m_grid = new GridController(m_coreController);
+        m_grid = new GridController();
+        m_grid.InitWithController(m_coreController);
     }
 
     [SetUp]
