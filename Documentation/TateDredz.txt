@@ -1,0 +1,37 @@
+Project consists of two main assemblies:
+	- Tools is for all code that can be reused in other project. Most are made agnostic to the current project (apart from using high level concepts such as Zenject or Rx)
+	- Tate contains all the project code
+
+2 scenes:
+	- Meta is the starting point with the basic UI allowing to choose between one or two player session 
+		- One player against AI module which currently does not think about winning and simply look for potential moves.
+		- Project already supports the possibility to select which session, with InputService to define turns between players or player/AI
+	- Core is the main game 
+	- Loading scene is not in the project and would contain all server side connections that were not involved in this project
+
+Usage of Zenject for DI and lifecycle of manager objects. Allows to inject interfaces to remove strong dependencies and simple UnitTests
+Usage of Rx for reactive programming. Unity does not support System.Reactive and UniRx is obsolete (while R3 is not yet fully implemented) so an  implementation of the basic concepts was added.
+Some Unit tests were added using NUnit and NSubstitute for mocking/faking. Not all classes were tested for lack of time. Logic for movement being an important part, UTs were added for that purpose.
+
+Classes needing direct interaction with other scene objects are made MonoBehaviour or injection.
+
+The limited nature of the project did not give a strong need for ScriptableObject. If there would have been a possibility to select different pawns then SO would have been the container for all prefabs to pick and create clones from.
+SO could have been used to link code to MonoBehaviour but using Zenject allows to remove the need for SO and simply instantiate and bind. Consumers can just use the attribute to reach the interface. This also removes the strong coupling between classes.
+As a result, PopupManager, Audio and LoadingCanvas are generated on start by Zenject and kept for the whole lifecycle of the project. 
+
+Along with dependency injection, there is also a Signal class that works as an event bus. Classes that may rely or be used by many different consumers can benefit from this concept. For instance, the audio being used in many instances instead of being added or injected to the consumers, the Signal process is used. 
+
+The project is using orthogonal camera view with SpriteRenderer in 2D world. The Core view could also have been achieved using UI only.
+It would have pros and cons.
+	- Pros, easier to place and scale based on screen ratio
+	- Cons, can get slow when too many items
+As a result, the project has UI items and Core level in 2D world.
+
+PopupManager takes care of the popups lifecycle. Because Popups are created at runtime, they require a Factory design from Zenject.
+
+Project makes usage of mix of async, Rx and coroutine concepts. If the UI manipulation happens on a non-MonoBehaviour class, it will require async and then a proper lifecycle management for cancellation. A coroutine runner could have been added for non-MonoBehaviour objects.
+Coroutines are easier to call and maintain when dealing with a game object, the cancellation being controlled by the GO lifecycle. It also ensures to run on the main thread.
+As UniRx was not added, there is no animation based on Rx. Reactive programming is used to simplify listening to async method as it provides onNext and onComplete concepts. Also used for UI items that needed hooking on a variable state. 
+
+
+

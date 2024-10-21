@@ -1,37 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class InputDetection : MonoBehaviour
+namespace Tatedrez.Input
 {
-    private Camera mainCamera;
-    void Start()
+    public class InputDetection : InputBase
     {
-        mainCamera = Camera.main;
-    }
-
-    void Update()
-    {
-        // Detect if the user has clicked or tapped
-        if (Input.GetMouseButtonDown(0)) // 0 = Left Mouse Button
+        private Camera mainCamera;
+        private void Start()
         {
-            DetectClick();
+            mainCamera = Camera.main;
+        }
+
+        void Update()
+        {
+            if (UnityEngine.Input.GetMouseButtonDown(0))
+            {
+                DetectClick();
+            }
+        }
+
+        private void DetectClick()
+        {
+            Vector2 worldPoint = mainCamera.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+            if (hit.collider != null)
+            {
+                GameObject clickedObject = hit.collider.gameObject;
+                clickedObject.GetComponent<IClickable>()?.OnPress();
+            }
         }
     }
-
-    private void DetectClick()
-    {
-        Vector2 worldPoint = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
-        if (hit.collider != null)
-        {
-            GameObject clickedObject = hit.collider.gameObject;
-            clickedObject.GetComponent<IClickable>()?.OnPress();
-        }
-    }
-}
-
-public interface IClickable 
-{
-    void OnPress();
 }

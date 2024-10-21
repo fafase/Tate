@@ -1,59 +1,56 @@
 using System;
 
-public class ReactiveProperty<T> : IReactiveProperty<T>, IDisposable
+namespace Rx
 {
-    private T value;
-
-    public event Action<T> ValueChanged;
-
-    public T Value
+    public class ReactiveProperty<T> : IReactiveProperty<T>, IDisposable
     {
-        get => value;
-        set
+        private T value;
+
+        public event Action<T> OnValueChanged;
+
+        public T Value
         {
-            if (!Equals(this.value, value))
+            get => value;
+            set
             {
-                this.value = value;
-                ValueChanged?.Invoke(this.value);
+                if (!Equals(this.value, value))
+                {
+                    this.value = value;
+                    OnValueChanged?.Invoke(this.value);
+                }
             }
         }
-    }
 
-    public ReactiveProperty(T initialValue = default)
-    {
-        value = initialValue;
-    }
-
-    public IDisposable Subscribe(Action<T> listener)
-    {
-        ValueChanged += listener;
-        return new Unsubscriber(() => ValueChanged -= listener);
-    }
-
-    public void Dispose()
-    {
-        ValueChanged = null; 
-    }
-
-    private class Unsubscriber : IDisposable
-    {
-        private readonly Action unsubscribeAction;
-
-        public Unsubscriber(Action unsubscribeAction)
+        public ReactiveProperty(T initialValue = default)
         {
-            this.unsubscribeAction = unsubscribeAction;
+            value = initialValue;
         }
+
+        public IDisposable Subscribe(Action<T> listener)
+        {
+            OnValueChanged += listener;
+            return new Unsubscriber(() => OnValueChanged -= listener);
+        }
+
 
         public void Dispose()
         {
-            unsubscribeAction();
+            OnValueChanged = null;
+        }
+
+        private class Unsubscriber : IDisposable
+        {
+            private readonly Action unsubscribeAction;
+
+            public Unsubscriber(Action unsubscribeAction)
+            {
+                this.unsubscribeAction = unsubscribeAction;
+            }
+
+            public void Dispose()
+            {
+                unsubscribeAction();
+            }
         }
     }
-}
-
-public interface IReactiveProperty<T>
-{
-    T Value { get; set; }
-    event Action<T> ValueChanged;
-    IDisposable Subscribe(Action<T> listener);
 }
