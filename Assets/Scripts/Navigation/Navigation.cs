@@ -11,12 +11,12 @@ public abstract class Navigation : MonoBehaviour
     [Inject] protected IPopupManager m_popupManager;
     private CompositeDisposable m_compositeDisposable = new CompositeDisposable();
 
-    private void Start()
+    protected virtual void Start()
     {
         m_loadButton.onClick.AddListener(() => OnPress());
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         m_compositeDisposable?.Dispose();
     }

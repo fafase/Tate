@@ -25,8 +25,10 @@ public class InputService : MonoBehaviour
                     input.InputType.Equals(InputType.Player) && input.Turn.Equals(Turn.Player2));
                 break;
             case Player.Two:
+            default:
                 predicate = new Predicate<InputBase>(input => input.InputType.Equals(InputType.NPC));
                 break;
+
         }
         SetInputs(predicate);
         Signal.Connect<EndGameSignal>(OnEndGame);
