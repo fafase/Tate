@@ -14,8 +14,8 @@ public class EndGameService
     {
         return Observable.Create<Unit>(observer => 
         {
-            List<IPawn> winningPawn = pawns.FindAll(pawn => pawn.PawnTurn.Equals(winningTurn));
-            List<IPawn> losingPawn = pawns.FindAll(pawn => !pawn.PawnTurn.Equals(winningTurn));
+            List<IPawn> winningPawn = pawns.FindAll(pawn => pawn.Owner.Equals(winningTurn));
+            List<IPawn> losingPawn = pawns.FindAll(pawn => !pawn.Owner.Equals(winningTurn));
             RemoveSequence(losingPawn).Forget();
             BlobSequence(winningPawn).Forget();
             TimerSequence()
