@@ -4,6 +4,7 @@ using UnityEngine;
 using Rx;
 using Zenject;
 using UnityEngine.UI;
+using Tate.Core;
 
 namespace Tatedrez.Meta
 {
@@ -19,7 +20,7 @@ namespace Tatedrez.Meta
         {
             m_onePlayer
                 .OnClickAsObservable()
-                .Subscribe(_ => OnPress(Player.Single))
+                .Subscribe(_ => m_popupManager.Show<MissingSinglePlayerPopup>()) //OnPress(Player.Single))
                 .AddTo(m_compositeDisposable);
 
             m_twoPlayer
