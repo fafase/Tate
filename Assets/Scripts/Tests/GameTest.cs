@@ -112,7 +112,7 @@ public class GameTest
     private void CreatePawn(Turn turn, int x, int y)
     {
         IPawn pawn = Substitute.For<IPawn>();
-        pawn.PawnTurn.Returns(turn);
+        pawn.Owner.Returns(turn);
         m_grid.SetPawnOnGrid(pawn, x, y);
     }
 }

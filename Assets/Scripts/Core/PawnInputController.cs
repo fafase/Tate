@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using Tools;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Tatedrez.Input;
 using Zenject;
 
 namespace Tatedrez.Core
@@ -25,7 +25,7 @@ namespace Tatedrez.Core
         public bool HasMovedToDeck { get; private set; }
         public PawnType PawnType => m_pawnType;
 
-        public Turn PawnTurn => m_item;
+        public Turn Owner => m_item;
         public Transform Transform => transform;
         private SpriteRenderer m_spriteRenderer;
 
@@ -120,7 +120,7 @@ namespace Tatedrez.Core
         IObservable<Unit> MoveToPosition(ITile tile);
         ITile CurrentTile { get; }
         bool HasMovedToDeck { get; }
-        Turn PawnTurn { get; }
+        Turn Owner { get; }
         PawnType PawnType { get; }
         Transform Transform { get; }
     }

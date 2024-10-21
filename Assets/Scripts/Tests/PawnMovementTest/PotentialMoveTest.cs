@@ -49,7 +49,7 @@ public class PotentialMoveTest : PawnMovementTest
         ITile tile = Substitute.For<ITile>();
         tile.GridX.Returns(x); tile.GridY.Returns(y);
         pawn.CurrentTile.Returns(tile);
-        pawn.PawnTurn.Returns(Turn.Player1);
+        pawn.Owner.Returns(Turn.Player1);
         pawn.PawnType.Returns(type);
         m_grid.Grid[x,y] = pawn;
         return pawn;
