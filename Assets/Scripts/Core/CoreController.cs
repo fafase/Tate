@@ -13,31 +13,30 @@ namespace Tatedrez.Core
     {
         [Inject] private IMovementService m_movementService;
         [Inject] private IPopupManager m_popupManager;
+        [Inject] private IGrid m_grid;
 
         [SerializeField] private GameObject m_pawnContainer;
         [SerializeField] private GameObject m_tileContainer;
-        private CompositeDisposable m_compositeDisposable = new CompositeDisposable();
+
         public IPawn SelectedPawn { get; private set; }
         public List<IPawn> Pawns => m_pawns;
         public IReactiveProperty<Turn> CurrentTurn { get; private set; } = new ReactiveProperty<Turn>(Turn.Player1);
         public IReactiveProperty<Movement> LastMovement { get; private set; } = new ReactiveProperty<Movement>();
-
-        public ITile[,] Tiles { get; private set; } = new ITile[3,3]; 
+        public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
 
         private List<IPawn> m_pawns = new List<IPawn>();
-        
-        public bool AllPawnsOnDeck => m_pawns.All(p => p.HasMovedToDeck);
         private EndGameService m_endGameService;
         private bool m_isPaused;
+        private CompositeDisposable m_compositeDisposable = new CompositeDisposable();
 
-        void Start()
+        private void Start()
         {
             m_pawns = m_pawnContainer.GetComponentsInChildren<IPawn>(true).ToList();
-            GenerateTileGrid();
             Signal.Connect<PauseGameSignal>(OnPause);
+            m_grid.GenerateTileGrid(m_tileContainer);
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             (CurrentTurn as IDisposable)?.Dispose();
             m_compositeDisposable?.Dispose();
@@ -98,15 +97,8 @@ namespace Tatedrez.Core
         {
             m_isPaused = data.IsPaused;
         }
-        private void GenerateTileGrid() 
-        {
-            var tiles = m_tileContainer.GetComponentsInChildren<ITile>(true);
-            foreach(ITile tile in tiles) 
-            {
-                Tiles[tile.GridX, tile.GridY] = tile;
-            }
-        }
     }
+
     public struct Movement
     {
         public readonly IPawn pawn;
@@ -129,6 +121,5 @@ namespace Tatedrez.Core
         IReactiveProperty<Movement> LastMovement { get; }
         bool AllPawnsOnDeck { get; }
         List<IPawn> Pawns { get; }
-        ITile[,] Tiles { get; }
     }
 }

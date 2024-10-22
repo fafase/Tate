@@ -58,7 +58,7 @@ namespace Tatedrez.Input
             m_core.SetSelectedPawn(selectedPawn);
             moves.AddRange(m_movementService.CheckForAllowedMoves(selectedPawn));
             var (row, col) = moves[UnityEngine.Random.Range(0, moves.Count - 1)];
-            (m_core.Tiles[row, col] as IClickable).OnPress();
+            (m_grid.Tiles[row, col] as IClickable).OnPress();
         }
     }
 }
