@@ -9,10 +9,9 @@ namespace Tatedrez.Core
     {
         [Inject] private ICoreController m_core;
 
-        public IPawn[,] Grid => m_grid;
+        public IPawn[,] Grid { get; private set; } = new IPawn[3, 3];
         public ITile[,] Tiles { get; private set; } = new ITile[3, 3];
 
-        private IPawn[,] m_grid = new IPawn[3, 3];
         private bool m_isDisposed = false;
 
         public void Initialize()
@@ -25,7 +24,7 @@ namespace Tatedrez.Core
             if(m_isDisposed) return;
             m_isDisposed = true;
             Signal.Disconnect <PawnMovementSignal>(OnPawnMovement);
-            m_grid = null;
+            Grid = null;
         }
         public void InitWithController(ICoreController core) 
         {
@@ -43,11 +42,11 @@ namespace Tatedrez.Core
 
         public (int row, int col)? FindInstance(IPawn instance)
         {
-            for (int row = 0; row < m_grid.GetLength(0); row++)
+            for (int row = 0; row < Grid.GetLength(0); row++)
             {
-                for (int col = 0; col < m_grid.GetLength(1); col++)
+                for (int col = 0; col < Grid.GetLength(1); col++)
                 {
-                    if (ReferenceEquals(m_grid[row, col], instance))
+                    if (ReferenceEquals(Grid[row, col], instance))
                     {
                         return (row, col);
                     }
@@ -60,29 +59,29 @@ namespace Tatedrez.Core
         {
             for (int i = 0; i < 3; i++)
             {
-                if ((m_grid[i, 0]?.Owner == turn && m_grid[i, 1]?.Owner == turn && m_grid[i, 2]?.Owner == turn) || 
-                    (m_grid[0, i]?.Owner == turn && m_grid[1, i]?.Owner == turn && m_grid[2, i]?.Owner == turn))   
+                if ((Grid[i, 0]?.Owner == turn && Grid[i, 1]?.Owner == turn && Grid[i, 2]?.Owner == turn) || 
+                    (Grid[0, i]?.Owner == turn && Grid[1, i]?.Owner == turn && Grid[2, i]?.Owner == turn))   
                 {
                     m_core.SetWin(turn);
                 }
             }
 
-            if ((m_grid[0, 0]?.Owner == turn && m_grid[1, 1]?.Owner == turn && m_grid[2, 2]?.Owner == turn) || 
-                (m_grid[0, 2]?.Owner == turn && m_grid[1, 1]?.Owner == turn && m_grid[2, 0]?.Owner == turn))   
+            if ((Grid[0, 0]?.Owner == turn && Grid[1, 1]?.Owner == turn && Grid[2, 2]?.Owner == turn) || 
+                (Grid[0, 2]?.Owner == turn && Grid[1, 1]?.Owner == turn && Grid[2, 0]?.Owner == turn))   
             {
                 m_core.SetWin(turn);
             }
         }
 
-        public void SetPawnOnGrid(IPawn pawn, int x, int y) => m_grid[x, y] = pawn;
+        public void SetPawnOnGrid(IPawn pawn, int x, int y) => Grid[x, y] = pawn;
 
         public void Reset()
         {
-            for (int row = 0; row < m_grid.GetLength(0); row++)
+            for (int row = 0; row < Grid.GetLength(0); row++)
             {
-                for (int col = 0; col < m_grid.GetLength(1); col++)
+                for (int col = 0; col < Grid.GetLength(1); col++)
                 {
-                    m_grid[row, col] = null;
+                    Grid[row, col] = null;
                 }
             }
         }
@@ -97,10 +96,10 @@ namespace Tatedrez.Core
             var pos = FindInstance(movement.Pawn);
             if (pos != null)
             {
-                m_grid[pos.Value.row, pos.Value.col] = null;
+                Grid[pos.Value.row, pos.Value.col] = null;
             }
             ITile tile = movement.Tile;
-            m_grid[tile.GridX, tile.GridY] = movement.Pawn;
+            Grid[tile.GridX, tile.GridY] = movement.Pawn;
             CheckWin(pawn.Owner);
         }
     }
