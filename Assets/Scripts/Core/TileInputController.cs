@@ -14,7 +14,7 @@ namespace Tatedrez.Core
         public bool IsAvailable { get; private set; } = true;
         public Vector3 Position => transform.position;
         public string Name => gameObject.name;
-        public IPawn CurrentPawn { get; private set; }
+        public IPawn CurrentPawn { get; set; }
 
         public int GridX { get; private set; }
         public int GridY { get; private set; }
@@ -81,7 +81,7 @@ namespace Tatedrez.Core
         int GridX { get; }
         int GridY { get; }
         void FreeTile();
-        IPawn CurrentPawn { get; }
+        IPawn CurrentPawn { get; set; }
         void SetTileBackground(bool state);
     }
 }

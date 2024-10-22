@@ -19,16 +19,16 @@ namespace Tatedrez.Core
         [SerializeField] private float m_period = 0.5f;
         [SerializeField] private float m_maxScale = 1.5f;
 
-        private static PawnInputController m_selected;
-        private Turn m_current;
+        public Vector2Int Position { get; set; } = new Vector2Int(-1, -1);
         public ITile CurrentTile { get; private set; }
-        public bool HasMovedToDeck { get; private set; }
+        public bool HasMovedToDeck { get; private set; } 
         public PawnType PawnType => m_pawnType;
-
         public Turn Owner => m_item;
         public Transform Transform => transform;
-        private SpriteRenderer m_spriteRenderer;
 
+        private static PawnInputController m_selected;
+        private Turn m_current;
+        private SpriteRenderer m_spriteRenderer;
         private const int s_orderLayerMove = 10;
         private const int s_orderLayerIdle = 5;
 
@@ -60,33 +60,32 @@ namespace Tatedrez.Core
             SetBackground(!m_background.activeSelf);
         }
 
-
-        private void SetBackground(bool value)
-        {
-            m_background.SetActive(value);
-        }
-
         public IObservable<Unit> MoveToPosition(ITile tile)
         {
-            return Observable.Create<Unit>(observer => 
+            return Observable.Create<Unit>(observer =>
             {
                 Signal.Send(new AudioSignal(AudioSignal.Bloop));
                 m_spriteRenderer.sortingOrder = s_orderLayerMove;
-                HasMovedToDeck = true;
+                
                 CurrentTile?.FreeTile();
                 CurrentTile = tile;
                 Vector3 position = CurrentTile.Position;
                 position.z = -1f;
                 StartCoroutine(LerpSequence(observer, position, 0.25f));
-                
+
                 SetBackground(false);
-                return Disposable.Create(() => 
+                return Disposable.Create(() =>
                 {
                     m_spriteRenderer.sortingOrder = s_orderLayerIdle;
+                    HasMovedToDeck = true;
                 });
             });
         }
 
+        private void SetBackground(bool value)
+        {
+            m_background.SetActive(value);
+        }
 
         private IEnumerator LerpSequence(IObserver<Unit> observable, Vector3 target, float period)
         {
@@ -123,5 +122,6 @@ namespace Tatedrez.Core
         Turn Owner { get; }
         PawnType PawnType { get; }
         Transform Transform { get; }
+        Vector2Int Position { get; set; }
     }
 }

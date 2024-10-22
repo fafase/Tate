@@ -40,21 +40,6 @@ namespace Tatedrez.Core
             }
         }
 
-        public (int row, int col)? FindInstance(IPawn instance)
-        {
-            for (int row = 0; row < Grid.GetLength(0); row++)
-            {
-                for (int col = 0; col < Grid.GetLength(1); col++)
-                {
-                    if (ReferenceEquals(Grid[row, col], instance))
-                    {
-                        return (row, col);
-                    }
-                }
-            }
-            return null;
-        }
-
         public void CheckWin(Turn turn)
         {
             for (int i = 0; i < 3; i++)
@@ -93,13 +78,15 @@ namespace Tatedrez.Core
                 return;
             }
             IPawn pawn = movement.Pawn;
-            var pos = FindInstance(movement.Pawn);
-            if (pos != null)
+            Vector2Int pos = pawn.Position;
+            if (pos.x >= 0)
             {
-                Grid[pos.Value.row, pos.Value.col] = null;
+                Grid[pos.x, pos.y] = null;
             }
             ITile tile = movement.Tile;
-            Grid[tile.GridX, tile.GridY] = movement.Pawn;
+            tile.CurrentPawn = pawn;
+            pawn.Position = new Vector2Int(tile.GridX, tile.GridY);
+            Grid[tile.GridX, tile.GridY] = pawn;
             CheckWin(pawn.Owner);
         }
     }

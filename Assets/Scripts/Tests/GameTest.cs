@@ -22,33 +22,6 @@ public class GameTest
     }
 
     [Test]
-    public void GridControlFindInstance() 
-    {
-        IPawn pawnA = Substitute.For<IPawn>();
-        m_grid.SetPawnOnGrid(pawnA, 0, 1);
-        IPawn pawnB = Substitute.For<IPawn>();
-        m_grid.SetPawnOnGrid(pawnB, 1, 1);
-
-        var result = m_grid.FindInstance(pawnA);
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(result.Value.row, 0);
-        Assert.AreEqual(result.Value.col, 1);
-    }
-
-    [Test]
-    public void GridControlFindNoInstance()
-    {
-        IPawn pawnA = Substitute.For<IPawn>();
-        IPawn pawnB = Substitute.For<IPawn>();
-        m_grid.SetPawnOnGrid(pawnB, 1, 1);
-
-        var result = m_grid.FindInstance(pawnA);
-
-        Assert.IsNull(result);
-    }
-
-    [Test]
     public void GridControlCheckNoWin()
     {
         CreatePawn(Turn.Player1, 0, 0);
