@@ -1,20 +1,25 @@
 using Tools;
 using Zenject;
 using System;
+using UnityEngine;
 
 namespace Tatedrez.Core
 {
     public class GridController : IGrid, IInitializable, IDisposable
     {
         [Inject] private ICoreController m_core;
+
+        public IPawn[,] Grid => m_grid;
+        public ITile[,] Tiles { get; private set; } = new ITile[3, 3];
+
         private IPawn[,] m_grid = new IPawn[3, 3];
         private bool m_isDisposed = false;
-        public IPawn[,] Grid => m_grid;
 
         public void Initialize()
         {
             Signal.Connect<PawnMovementSignal>(OnPawnMovement);
         }
+
         public void Dispose() 
         {
             if(m_isDisposed) return;
@@ -27,22 +32,13 @@ namespace Tatedrez.Core
             m_core = core;
         }
 
-
-        private void OnPawnMovement(PawnMovementSignal movement)
+        public void GenerateTileGrid(GameObject tileContainer)
         {
-            if(movement.StartMovement)
+            var tiles = tileContainer.GetComponentsInChildren<ITile>(true);
+            foreach (ITile tile in tiles)
             {
-                return;
+                Tiles[tile.GridX, tile.GridY] = tile;
             }
-            IPawn pawn = movement.Pawn;
-            var pos = FindInstance(movement.Pawn);
-            if (pos != null)
-            {
-                m_grid[pos.Value.row, pos.Value.col] = null;
-            }
-            ITile tile = movement.Tile;
-            m_grid[tile.GridX, tile.GridY] = movement.Pawn;
-            CheckWin(pawn.Owner);
         }
 
         public (int row, int col)? FindInstance(IPawn instance)
@@ -90,11 +86,30 @@ namespace Tatedrez.Core
                 }
             }
         }
+
+        private void OnPawnMovement(PawnMovementSignal movement)
+        {
+            if (movement.StartMovement)
+            {
+                return;
+            }
+            IPawn pawn = movement.Pawn;
+            var pos = FindInstance(movement.Pawn);
+            if (pos != null)
+            {
+                m_grid[pos.Value.row, pos.Value.col] = null;
+            }
+            ITile tile = movement.Tile;
+            m_grid[tile.GridX, tile.GridY] = movement.Pawn;
+            CheckWin(pawn.Owner);
+        }
     }
 
     public interface IGrid
     {
         IPawn[,] Grid { get; }
+        ITile[,] Tiles { get; }
+        void GenerateTileGrid(GameObject tileContainer);
     }
 }
 
