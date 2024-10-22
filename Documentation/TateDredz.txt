@@ -33,5 +33,7 @@ Project makes usage of mix of async, Rx and coroutine concepts. If the UI manipu
 Coroutines are easier to call and maintain when dealing with a game object, the cancellation being controlled by the GO lifecycle. It also ensures to run on the main thread.
 As UniRx was not added, there is no animation based on Rx. Reactive programming is used to simplify listening to async method as it provides onNext and onComplete concepts. Also used for UI items that needed hooking on a variable state. 
 
+Pawns jumping over other pawns : Wrong early design allowed pawns to be potentially moved over occupied tiles, this is no longer allowed but the logic to jump over remains in the project. A simple flag would allow it.
 
+Strong Consideration : Due to progress of the project, CoreController held an array of tile occupation while GridController holds an array of IPawn used for potential moves and win detection. Currently in the process of merging those, already removed the array from CoreController.
 
